@@ -1,0 +1,86 @@
+﻿@model ThuongMaiDienTu.Models.NguoiDung
+
+@{
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+    ViewData["Title"] = "Đăng Ký";
+}
+
+<h3 class="text-center">Đăng Ký Tài Khoản</h3>
+
+<form id="registerForm" >
+    <div class="mb-3">
+        <label asp-for="Ho_Ten" class="form-label">Họ và Tên</label>
+        <input asp-for="Ho_Ten" class="form-control">
+        <span asp-validation-for="Ho_Ten" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Mat_Khau" class="form-label">Mật khẩu</label>
+        <input asp-for="Mat_Khau" class="form-control" type="password">
+        <span asp-validation-for="Mat_Khau" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="So_Dien_Thoai" class="form-label">Số điện thoại</label>
+        <input asp-for="So_Dien_Thoai" class="form-control">
+        <span asp-validation-for="So_Dien_Thoai" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Vai_Tro_Id" class="form-label">Vai Trò</label>
+        <select asp-for="Vai_Tro_Id" class="form-control">
+            <option value="1">Người Mua</option>
+            <option value="2">Người Bán</option>
+        </select>
+        <span asp-validation-for="Vai_Tro_Id" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Đăng Ký</button>
+</form>
+
+<div class="text-center mt-3">
+    <h4>Đã có tài khoản?<a href="@Url.Action("Login", "Account")"> Đăng nhập</a></h4>
+</div>
+
+<script>
+    document.getElementById("registerForm").addEventListener("submit", function(event){
+        event.preventDefault();
+
+        let formData = {
+            Ho_Ten: document.getElementById("Ho_Ten").value,
+            Email: document.getElementById("Email").value,
+            Mat_Khau: document.getElementById("Mat_Khau").value,
+            So_Dien_Thoai: document.getElementById("So_Dien_Thoai").value,
+            Vai_Tro_Id: document.getElementById("Vai_Tro_Id").value
+        };
+
+        fetch('@Url.Action("Register", "Account")', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success){
+                if (data.seller) {
+                    window.location.href = "@Url.Action("Create", "Store")";
+                }
+                else{
+                    alert("Đăng kí thành công!");
+                    window.location.href = "@Url.Action("Login", "Account")";
+                }
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        })
+        .catch(error => console.error("Lỗi:", error));
+    });
+</script>

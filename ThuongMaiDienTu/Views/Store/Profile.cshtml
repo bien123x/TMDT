@@ -1,0 +1,21 @@
+﻿@model ThuongMaiDienTu.Models.CuaHang
+
+@{
+    ViewData["Title"] = "Thông Tin Cửa Hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Thông Tin Cửa Hàng</h2>
+
+<div class="card mx-auto" style="max-width: 500px;">
+    <div class="card-body">
+        <h5 class="card-title text-center">@Model.Ten_Cua_Hang</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Mô tả:</strong> @Model.Mo_Ta</li>
+            <li class="list-group-item"><strong>Ngày tạo:</strong> @Model.Ngay_Tao.ToString("dd/MM/yyyy")</li>
+        </ul>
+        <div class="text-center mt-3">
+            <a href="@Url.Action("Edit", "Store", new { id = Model.Id })" class="btn btn-primary">Chỉnh sửa</a>
+        </div>
+    </div>
+</div>

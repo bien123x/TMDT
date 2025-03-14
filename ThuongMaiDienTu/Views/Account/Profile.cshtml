@@ -1,0 +1,30 @@
+﻿@model ThuongMaiDienTu.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Thông Tin Cá Nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Thông Tin Cá Nhân</h2>
+
+<div class="card mx-auto" style="max-width: 500px;">
+    <div class="card-body">
+        <h5 class="card-title text-center">@Model.Ho_Ten</h5>
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+            <li class="list-group-item"><strong>Mật khẩu:</strong> *****</li>
+            <li class="list-group-item"><strong>Số điện thoại:</strong> @(Model.So_Dien_Thoai ?? "Chưa cập nhật")</li>
+            <li class="list-group-item"><strong>Vai trò:</strong> @(Model.Vai_Tro_Id == 1 ? "Người Mua" : "Người Bán")</li>
+            <li class="list-group-item"><strong>Ngày tạo:</strong> @Model.Ngay_Tao.ToString("dd/MM/yyyy")</li>
+        </ul>
+
+        <div class="text-center mt-3">
+            <a href="@Url.Action("EditProfile", "Account")" class="btn btn-primary">Chỉnh sửa</a>
+            <a href="@Url.Action("RePassword", "Account")" class="btn btn-danger">Đổi mật khẩu</a>
+            @if (ViewBag.NoStore != null) {
+                <a href="@Url.Action("Create", "Store")" class="btn btn-danger">Tạo cửa hàng</a>
+            }
+        </div>
+    </div>
+</div>

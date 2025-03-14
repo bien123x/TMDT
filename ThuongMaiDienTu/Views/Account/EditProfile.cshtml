@@ -1,0 +1,67 @@
+﻿@model ThuongMaiDienTu.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Thông Tin Cá Nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Chỉnh Sửa Thông Tin Cá Nhân</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form id="editProfileForm" class="mx-auto" style="max-width: 500px;">
+    <div class="mb-3">
+        <label asp-for="Ho_Ten" class="form-label">Họ và Tên</label>
+        <input asp-for="Ho_Ten" class="form-control" required>
+        <span asp-validation-for="Ho_Ten" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" required>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="So_Dien_Thoai" class="form-label">Số Điện Thoại</label>
+        <input asp-for="So_Dien_Thoai" class="form-control">
+        <span asp-validation-for="So_Dien_Thoai" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Lưu Thay Đổi</button>
+</form>
+
+<div class="text-center mt-3">
+    <a href="@Url.Action("Profile", "Account")" class="btn btn-secondary">Quay lại</a>
+</div>
+
+<script>
+    document.getElementById("editProfileForm").addEventListener("submit", function(event){
+        event.preventDefault();
+
+        let formData = {
+            Ho_Ten: document.getElementById("Ho_Ten").value,
+            Email: document.getElementById("Email").value,
+            So_Dien_Thoai: document.getElementById("So_Dien_Thoai").value
+        };
+
+        fetch('@Url.Action("EditProfile", "Account")',{
+            method: "PATCH",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success){
+                alert("Cập nhật thành công!");
+                window.location.href = "@Url.Action("Profile", "Account")";
+            } else {
+                alert("Lỗi: " + data.message);
+            }
+        })
+        .catch(error => console.error('Lỗi:', error));
+    });
+</script>

@@ -1,0 +1,31 @@
+﻿@model ThuongMaiDienTu.Models.CuaHang
+
+@{
+    ViewData["Title"] = "Tạo Cửa Hàng";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<h2 class="text-center">Tạo Cửa Hàng</h2>
+
+<form method="post" asp-action="Create" asp-controller="Store">
+    <div class="mb-3">
+        <label asp-for="Id_Nguoi_Ban" class="form-label">Mã người bán</label>
+        <input asp-for="Id_Nguoi_Ban" class="form-control" value="@ViewBag.SellerId" readonly/>
+        <span asp-validation-for="Id_Nguoi_Ban" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Ten_Cua_Hang" class="form-label">Tên Cửa Hàng</label>
+        <input asp-for="Ten_Cua_Hang" class="form-control" required />
+        <span asp-validation-for="Ten_Cua_Hang" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Mo_Ta" class="form-label">Mô Tả</label>
+        <textarea asp-for="Mo_Ta" class="form-control"></textarea>
+        <span asp-validation-for="Mo_Ta" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Thêm Cửa Hàng</button>
+</form>
+

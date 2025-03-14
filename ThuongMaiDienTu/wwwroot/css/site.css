@@ -1,0 +1,69 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header img {
+    height: 40px;
+}
+
+.badge {
+    font-size: 12px;
+    border-radius: 50%;
+}
+
+.container {
+    margin: 0;
+    padding: 0;
+}
+
+header .container-fluid {
+    min-height: 100px;
+}
+
+h2 {
+    height: 40px;
+}
+
+.search {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0px 0px 0px 10px;
+    border-radius: 20px;
+}
+
+.fa-magnifying-glass {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+input[type="text"] {
+    color: rgba(0, 0, 0, 0.5);
+    background: none;
+    border: none;
+    outline: none;
+    height: 40px;
+}
+    input[type="text"]:focus {
+        outline: none;
+        box-shadow: none;
+        background: none;
+    }
+
+.btn {
+    background: rgb(0, 255, 33);
+    white-space: nowrap;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    height: 40px;
+}
+
+.icon {
+    font-size: 40px;
+}
+
+.carousel img, .slide img {
+    max-height: 400px; /* Điều chỉnh chiều cao theo ý muốn */
+    width: auto;
+    object-fit: cover; /* Giữ tỷ lệ ảnh, tránh bị méo */
+}
