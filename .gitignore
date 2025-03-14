@@ -1,0 +1,54 @@
+# Thư mục hệ thống và tệp tạm thời
+bin/
+obj/
+.vs/
+**/appsettings*.json
+**/secrets.json
+.env
+
+# Các tệp log
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Các tệp khóa và cache
+*.lock
+*.cache
+*.pdb
+*.user
+*.vsconfig
+*.suo
+*.vscode/
+
+# Các tệp tạm thời của Visual Studio
+*.csproj.user
+*.dbmdl
+*.jfm
+*.bak
+*.swp
+Thumbs.db
+
+# Bỏ qua thư mục của IDE khác (nếu dùng)
+.idea/
+.vscode/
+
+# Các thư viện và gói cài đặt
+node_modules/
+packages/
+wwwroot/lib/
+!wwwroot/lib/.gitkeep
+
+# Các tệp tạo bởi Entity Framework Core
+Migrations/
+
+# Các tệp xuất dữ liệu hoặc backup
+*.mdf
+*.ldf
+*.bak
+*.csv
+*.sql
+
+# Docker files (nếu dự án có dùng Docker)
+docker-compose.override.yml

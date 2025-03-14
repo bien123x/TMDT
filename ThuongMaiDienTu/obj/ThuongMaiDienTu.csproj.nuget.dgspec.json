@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj": {}
+    "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj": {}
   },
   "projects": {
-    "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj": {
+    "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj",
+        "projectUniqueName": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj",
         "projectName": "ThuongMaiDienTu",
-        "projectPath": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj",
+        "projectPath": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\ThuongMaiDienTu.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\obj\\",
+        "outputPath": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

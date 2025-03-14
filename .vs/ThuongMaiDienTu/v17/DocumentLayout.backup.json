@@ -1,37 +1,37 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\",
+  "WorkspaceRootPath": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\views\\store\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\views\\store\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\views\\store\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\controllers\\storecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\controllers\\storecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\controllers\\storecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\views\\store\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\views\\store\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\views\\store\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\data\\dbcontextapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\data\\dbcontextapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\data\\dbcontextapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\project\\thuongmaidientu\\thuongmaidientu\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|e:\\2025-hk1\\webnc\\btl\\pull_ve\\tmdt\\thuongmaidientu\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{261F7369-5493-45EF-B459-8CE1BA84A95C}|ThuongMaiDienTu\\ThuongMaiDienTu.csproj|solutionrelative:thuongmaidientu\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -48,37 +48,35 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "site.css",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\wwwroot\\css\\site.css",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\wwwroot\\css\\site.css",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\wwwroot\\css\\site.css",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\wwwroot\\css\\site.css",
               "RelativeToolTip": "ThuongMaiDienTu\\wwwroot\\css\\site.css",
               "ViewState": "AgIAACoAAAAAAAAAAAAAAD0AAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-03-14T03:50:15.645Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T03:50:15.645Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Profile.cshtml",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Store\\Profile.cshtml",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Store\\Profile.cshtml",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Views\\Store\\Profile.cshtml",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Store\\Profile.cshtml",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Store\\Profile.cshtml",
               "RelativeToolTip": "ThuongMaiDienTu\\Views\\Store\\Profile.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-14T03:42:27.922Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T03:42:27.922Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "_Layout.cshtml",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml*",
-              "RelativeToolTip": "ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml*",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABEAAAAcAAAAAAAAAA==",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "ThuongMaiDienTu\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABQAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-03-14T03:27:31.56Z",
               "EditorCaption": ""
@@ -87,66 +85,61 @@
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "DbContextApp.cs",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Data\\DbContextApp.cs",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Data\\DbContextApp.cs",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Data\\DbContextApp.cs",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Data\\DbContextApp.cs",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Data\\DbContextApp.cs",
               "RelativeToolTip": "ThuongMaiDienTu\\Data\\DbContextApp.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-14T02:45:39.679Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T02:45:39.679Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "Create.cshtml",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Store\\Create.cshtml",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Store\\Create.cshtml",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Views\\Store\\Create.cshtml",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Store\\Create.cshtml",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Store\\Create.cshtml",
               "RelativeToolTip": "ThuongMaiDienTu\\Views\\Store\\Create.cshtml",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAAsAAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-14T02:44:30.122Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T02:44:30.122Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
               "Title": "Register.cshtml",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Account\\Register.cshtml",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Account\\Register.cshtml",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Views\\Account\\Register.cshtml",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Views\\Account\\Register.cshtml",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Views\\Account\\Register.cshtml",
               "RelativeToolTip": "ThuongMaiDienTu\\Views\\Account\\Register.cshtml",
               "ViewState": "AgIAABIAAAAAAAAAAAAAAEgAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-14T02:40:34.16Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T02:40:34.16Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "StoreController.cs",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Controllers\\StoreController.cs",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Controllers\\StoreController.cs",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Controllers\\StoreController.cs",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Controllers\\StoreController.cs",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Controllers\\StoreController.cs",
               "RelativeToolTip": "ThuongMaiDienTu\\Controllers\\StoreController.cs",
               "ViewState": "AgIAAB4AAAAAAAAAAAAAwCQAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-14T02:36:19.948Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T02:36:19.948Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "AccountController.cs",
-              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Controllers\\AccountController.cs",
+              "DocumentMoniker": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "ThuongMaiDienTu\\Controllers\\AccountController.cs",
-              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Project\\ThuongMaiDienTu\\ThuongMaiDienTu\\Controllers\\AccountController.cs",
+              "ToolTip": "E:\\2025-HK1\\WebNC\\BTL\\Pull_Ve\\TMDT\\ThuongMaiDienTu\\Controllers\\AccountController.cs",
               "RelativeToolTip": "ThuongMaiDienTu\\Controllers\\AccountController.cs",
               "ViewState": "AgIAAE4AAAAAAAAAAAAmwGYAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-14T02:24:46.532Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-14T02:24:46.532Z"
             }
           ]
         }
