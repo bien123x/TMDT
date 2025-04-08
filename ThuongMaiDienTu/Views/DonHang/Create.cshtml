@@ -1,0 +1,33 @@
+﻿@model ThuongMaiDienTu.Models.DonHang
+
+@{
+    ViewData["Title"] = "Tạo Dơn Hàng";
+}
+
+<h2>Create Don Hang</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Id_Nguoi_Mua" class="control-label"></label>
+        <input asp-for="Id_Nguoi_Mua" class="form-control" />
+        <span asp-validation-for="Id_Nguoi_Mua" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Trang_Thai_Id" class="control-label"></label>
+        <input asp-for="Trang_Thai_Id" class="form-control" />
+        <span asp-validation-for="Trang_Thai_Id" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Tong_Tien" class="control-label"></label>
+        <input asp-for="Tong_Tien" class="form-control" />
+        <span asp-validation-for="Tong_Tien" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Ngay_Tao" class="control-label"></label>
+        <input asp-for="Ngay_Tao" class="form-control" />
+        <span asp-validation-for="Ngay_Tao" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>

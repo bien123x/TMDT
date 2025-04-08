@@ -5,65 +5,156 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/ChiTietSanPham.css")">
+<link href="~/css/ChiTietSanPham.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-
 <main>
+    <!-- Hiển thị thông báo từ TempData -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <!-- Chi tiết sản phẩm -->
     <div class="product-detail">
         <div class="image">
-            <img src="@Url.Content(Model.Hinh_Anh)" alt="@Model.Ten_San_Pham">
+            @{
+                string defaultProductImage = "~/images/default-product-image.jpg";
+                string productImageUrl = string.IsNullOrEmpty(Model.Hinh_Anh) ? defaultProductImage : Model.Hinh_Anh;
+            }
+            <img src="@Url.Content(productImageUrl)" alt="@Model.Ten_San_Pham">
         </div>
         <div class="info">
             <h1>@Model.Ten_San_Pham</h1>
-            @*<p>⭐ 5/5 từ 3 đánh giá</p>*@
             <p>⭐ @ViewBag.TrungBinhSao.ToString("0.0")/5 từ @ViewBag.TongDanhGia đánh giá</p>
             <p><del>@Model.Gia_Goc.ToString("N0") VNĐ</del> <strong>@(Model.Gia_Goc - Model.Giam_Gia) VNĐ</strong></p>
-
             <p>Số lượng: <input type="number" value="1" min="1" max="@Model.So_Luong_Ton" id="soLuong_SanPham" /> @Model.So_Luong_Ton sản phẩm có sẵn</p>
-            <button class="add-to-cart" data-id="@Model.Id">Thêm vào giỏ hàng</button>
-
+            @if (ViewBag.UserVaiTroId == 1) // Chỉ hiển thị nếu vai trò là nguoi_mua
+            {
+                <button class="add-to-cart" data-id="@Model.Id">Thêm vào giỏ hàng</button>
+            }
         </div>
     </div>
 
+    <!-- Mô tả sản phẩm -->
     <div class="description">
         <h2>Mô tả sản phẩm</h2>
         <p>@Model.Mo_Ta</p>
-
-
     </div>
 
+    <!-- Đánh giá sản phẩm -->
     <div class="review">
         <h2>Đánh Giá Sản Phẩm</h2>
-
-        @foreach (var danhGia in ViewBag.DanhGias)
+        @if (ViewBag.DanhGias != null && ViewBag.DanhGias.Count > 0)
         {
-            <div class="review-item">
-                <p><strong>@danhGia.NguoiDung.Ho_Ten</strong> - @danhGia.Ngay_Danh_Gia.ToString("dd/MM/yyyy")</p>
-                <p>⭐ @danhGia.So_Sao.ToString()/5</p>
-                <p>@danhGia.Noi_Dung</p>
-            </div>
+            foreach (var danhGia in ViewBag.DanhGias)
+            {
+                <div class="review-item" data-danhgia-id="@danhGia.Id">
+                    <div class="review-content">
+                        <p><strong>@danhGia.NguoiDung.Ho_Ten</strong> - @danhGia.Ngay_Danh_Gia.ToString("dd/MM/yyyy")</p>
+                        <p>⭐ @danhGia.So_Sao.ToString()/5</p>
+                        <p>@danhGia.Noi_Dung</p>
+                        @if (!string.IsNullOrEmpty(danhGia.Hinh_Anh))
+                        {
+                            <div class="review-image">
+                                @{
+                                    string defaultReviewImage = "~/images/default-review-image.jpg";
+                                    string reviewImageUrl = string.IsNullOrEmpty(danhGia.Hinh_Anh) ? defaultReviewImage : danhGia.Hinh_Anh;
+                                }
+                                <img src="@Url.Content(reviewImageUrl)" alt="Hình ảnh đánh giá" />
+                            </div>
+                        }
+                    </div>
+                    @if (ViewBag.UserVaiTroId == 3) // Chỉ hiển thị form xóa nếu vai trò là quan_tri
+                    {
+                        <div class="review-actions">
+                            <form method="post" action="@Url.Action("DeleteDanhGia", "SanPham", new { id = Model.Id, danhGiaId = danhGia.Id })" onsubmit="return confirm('Bạn có chắc muốn xóa đánh giá này không?');">
+                                <input type="hidden" name="danhGiaId" value="@danhGia.Id" />
+                                <button type="submit" class="delete-review">Xóa đánh giá</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
         }
-
+        else
+        {
+            <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+        }
     </div>
 </main>
 
+<!-- JavaScript cho chức năng thêm vào giỏ hàng -->
 <script>
-    document.querySelectorAll(".add-to-cart").forEach(button =>
-    {
-        button.addEventListener("click", function(event){
+    document.querySelectorAll(".add-to-cart").forEach(button => {
+        button.addEventListener("click", function (event) {
             let idSanPham = this.getAttribute("data-id");
             let soLuongSanPham = document.getElementById("soLuong_SanPham").value;
 
-            fetch('@Url.Action("AddToCart", "Cart")',{
+            fetch('@Url.Action("AddToCart", "Cart")', {
                 method: "POST",
-                headers: {"Content-Type" : "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ id: idSanPham, soLuongSanPham: soLuongSanPham })
             })
-            .then(response => response.json())
-            .then(data =>{
-                document.getElementById("cart_count").innerHTML = data.soLuong;
-            })
-        })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("cart_count").innerHTML = data.soLuong;
+                });
+        });
     });
 </script>
+
+<style>
+    /* CSS cho thông báo */
+    .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    /* CSS cho phần đánh giá */
+    .review-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .review-content {
+        flex-grow: 1;
+    }
+
+    .review-actions {
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+
+    .delete-review {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .delete-review:hover {
+            background-color: #c82333;
+        }
+</style>

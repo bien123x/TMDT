@@ -34,11 +34,13 @@
     </tbody>
 </table>
 
-<div class="text-end mt-3">
-    <a href="/Checkout" class="btn btn-success btn-lg">
-        <i class="fas fa-shopping-cart"></i> Tạo đơn hàng
-    </a>
-</div>
+@if (ViewBag.CoSanPham && Context.Session.GetInt32("UserId") != null) {
+    <div class="text-end mt-3">
+        <a href="@Url.Action("Create", "DonHang")" class="btn btn-success btn-lg">
+            <i class="fas fa-shopping-cart"></i> Tạo đơn hàng
+        </a>
+    </div>
+}
 
 <script>
     document.querySelectorAll(".soLuongGioHang").forEach(input => {

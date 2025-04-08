@@ -102,6 +102,8 @@ CREATE TABLE [don_hang] (
   [ngay_tao] DATETIME DEFAULT GETDATE()
 );
 GO
+ALTER TABLE Don_Hang  -- tên bảng thực tế của bạn
+ALTER COLUMN Tong_Tien DECIMAL(18, 2);  -- tăng kích thước phần nguyên
 
 -- Bảng chi tiết đơn hàng
 CREATE TABLE [chi_tiet_don_hang] (

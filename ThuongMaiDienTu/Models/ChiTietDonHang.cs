@@ -28,7 +28,7 @@ namespace ThuongMaiDienTu.Models
 
         [Required]
         [Precision(10, 2)]
-        public decimal Gia { get; set; }  // Giá tại thời điểm đặt hàng
+        public decimal? Gia { get; set; }  // Giá tại thời điểm đặt hàng
 
     }
 }

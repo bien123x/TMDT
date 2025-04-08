@@ -33,7 +33,7 @@ namespace ThuongMaiDienTu.Controllers
             if (ModelState.IsValid)
             {
                 _repository.Add(cuaHang);
-                var ch = _repository.GetAll().ToList().FirstOrDefault(ch => ch.Id_Nguoi_Ban == cuaHang.Id_Nguoi_Ban);
+                var ch = _repository.GetAll().ToList().FirstOrDefault(ch=> ch.Id_Nguoi_Ban == cuaHang.Id_Nguoi_Ban);
                 HttpContext.Session.SetInt32("StoreId", ch.Id);
                 return RedirectToAction("Index", "Home");
             }

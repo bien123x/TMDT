@@ -26,5 +26,15 @@ namespace ThuongMaiDienTu.Helpers
             }
             return soLuong;
         }
+
+        public static decimal GetCartPrice(ISession session) {
+            var carData = CartHelper.GetCart(session);
+            var price = 0;
+            foreach(var i in carData)
+            {
+                price += (int) i.Gia_Khuyen_Mai * i.So_Luong_Ton;
+            }
+            return price;
+        }
     }
 }

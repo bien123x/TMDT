@@ -1,0 +1,146 @@
+﻿@model ThuongMaiDienTu.Models.DanhGia
+
+@{
+    ViewData["Title"] = "Đánh Giá Sản Phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <h2 class="text-center mb-4">Đánh Giá Sản Phẩm: @ViewBag.TenSanPham</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success">@ViewBag.SuccessMessage</div>
+    }
+
+    <form asp-action="DanhGia" method="post" enctype="multipart/form-data" class="shadow p-4 bg-light rounded">
+        <input type="hidden" asp-for="Id_San_Pham" />
+        <input type="hidden" asp-for="Id_Nguoi_Mua" />
+        <input type="hidden" name="donHangId" value="@ViewBag.DonHangId" />
+
+        <!-- Đánh giá sao -->
+        <div class="mb-3">
+            <label asp-for="So_Sao" class="form-label fw-bold">Đánh giá sao:</label>
+            <div class="star-rating">
+                <input type="hidden" asp-for="So_Sao" id="soSao" value="5" />
+                <span class="star" data-value="1"><i class="fas fa-star"></i></span>
+                <span class="star" data-value="2"><i class="fas fa-star"></i></span>
+                <span class="star" data-value="3"><i class="fas fa-star"></i></span>
+                <span class="star" data-value="4"><i class="fas fa-star"></i></span>
+                <span class="star" data-value="5"><i class="fas fa-star"></i></span>
+            </div>
+            <span asp-validation-for="So_Sao" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Noi_Dung" class="form-label fw-bold">Nội dung đánh giá:</label>
+            <textarea asp-for="Noi_Dung" class="form-control" rows="5" placeholder="Nhập nội dung đánh giá của bạn..."></textarea>
+            <span asp-validation-for="Noi_Dung" class="text-danger"></span>
+        </div>
+
+        <!-- Upload hình ảnh với ô xem trước -->
+        <div class="mb-3">
+            <label asp-for="Hinh_Anh" class="form-label fw-bold">Hình ảnh (nếu có):</label>
+            <div class="image-preview-container">
+                <img id="imagePreview" src="~/images/default-preview-image.jpg" alt="Xem trước hình ảnh" class="image-preview" />
+            </div>
+            <input type="file" asp-for="HinhAnhFile" class="form-control mt-2" accept="image/*" onchange="previewImage(event)" />
+            <span asp-validation-for="Hinh_Anh" class="text-danger"></span>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
+            <a asp-controller="DonHang" asp-action="Details" asp-route-id="@ViewBag.DonHangId" class="btn btn-secondary">Quay Lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- JavaScript để xử lý chọn sao -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const stars = document.querySelectorAll(".star");
+            const soSaoInput = document.getElementById("soSao");
+
+            stars.forEach(star => {
+                star.classList.add("selected");
+            });
+
+            stars.forEach(star => {
+                star.addEventListener("click", function () {
+                    const value = parseInt(this.getAttribute("data-value"));
+                    soSaoInput.value = value;
+                    stars.forEach(s => {
+                        const starValue = parseInt(s.getAttribute("data-value"));
+                        if (starValue <= value) {
+                            s.classList.add("selected");
+                        } else {
+                            s.classList.remove("selected");
+                        }
+                    });
+                });
+            });
+        });
+
+        // JavaScript để xử lý xem trước hình ảnh
+        function previewImage(event) {
+            const imagePreview = document.getElementById("imagePreview");
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result; // Hiển thị hình ảnh trong ô xem trước
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.src = "~/images/default-preview-image.jpg"; // Nếu không có file, hiển thị hình ảnh mặc định
+            }
+        }
+    </script>
+}
+
+<style>
+    .star-rating {
+        display: inline-block;
+        font-size: 24px;
+    }
+
+    .star {
+        cursor: pointer;
+        color: #ddd;
+    }
+
+        .star.selected {
+            color: #f5c518;
+        }
+
+        .star:hover,
+        .star:hover ~ .star {
+            color: #f5c518;
+        }
+
+    /* CSS cho ô xem trước hình ảnh */
+    .image-preview-container {
+        width: 200px;
+        height: 200px;
+        border: 2px dashed #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>

@@ -31,5 +31,9 @@ namespace ThuongMaiDienTu.Models
 
         [Required]
         public DateTime Ngay_Danh_Gia { get; set; } = DateTime.Now;  // Ngày đánh giá (mặc định là thời gian hiện tại)
+
+        // Thêm thuộc tính này để xử lý upload file
+        [NotMapped] // Không ánh xạ vào cơ sở dữ liệu
+        public IFormFile? HinhAnhFile { get; set; }  // File hình ảnh từ form
     }
 }

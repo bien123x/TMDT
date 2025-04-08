@@ -1,9 +1,10 @@
 ﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
+    // Lấy thông tin người dùng từ Session
     var user = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
     var isSeller = HttpContextAccessor.HttpContext.Session.GetInt32("IsSeller");
-    var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("cart_count");
     var isAdmin = HttpContextAccessor.HttpContext.Session.GetInt32("IsAdmin");
+    var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("cart_count");
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -13,16 +14,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewData["Title"] - TikTok Shop</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Styles -->
+    <!-- Thư viện Font Awesome cho icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <!-- Site CSS -->
     <link rel="stylesheet" href="~/css/site.css">
-    <link rel="stylesheet" href="~/css/optimized_header.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    @RenderSection("Styles", required: false) <!-- Di chuyển lên đây -->
 
 </head>
 
 <body>
 
     <header class="header">
+         <!-- Thanh điều hướng (Navbar) -->
         <nav class="navbar navbar-expand-lg navbar-light border-bottom">
             <div class="container">
                 <!-- Logo bên trái -->
@@ -30,8 +37,7 @@
                     <img src="~/images/tiktok-shop-logo-1.jpg" alt="TikTok Shop" class="img-fluid">
                 </a>
 
-                <!-- Desktop -->
-                <!-- Tìm Kiếm -->
+                <!-- Thanh tìm kiếm - Hiển thị trên Desktop -->
                 <div class="d-none d-lg-flex flex-grow-1 justify-content-center">
                     <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex search-form">
                         <div class="input-group">
@@ -46,14 +52,15 @@
                 </div>
 
 
-                <!-- Chức năng -->
+                <!-- Menu chức năng - Hiển thị trên Desktop -->
                 <div class="d-none d-lg-flex align-items-center">
-
-                    <!-- Tài khoản và chức năng -->
                     @if (user != null)
                     {
+                        <!-- Người dùng đã đăng nhập -->
+
                         @if (isSeller == null && isAdmin == null)
                         { 
+                            <!-- Block: Người dùng thường -->
                             <!-- Giỏ hàng -->
                             <a class="nav-link position-relative mx-1" href="@Url.Action("Index", "Cart")">
                                 <i class="fa-solid fa-cart-shopping"></i>
@@ -62,40 +69,55 @@
                                     <span class="badge bg-danger rounded-circle badge-notification">@cartCount</span>
                                 }
                             </a>
+                            <!-- Dropdown Đơn hàng -->
+                            <div class="dropdown mx-2">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-file-invoice fs-5 me-1"></i> Đơn Hàng
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DonHang")">Danh sách đơn hàng</a></li>
+                                </ul>
+                            </div>
+                            
                         }
                         
                         @if (isSeller != null)
                         {
-                            <div class="dropdown mx-1">
+                            <!-- Block: Người bán hàng -->
+                            <div class="dropdown mx-2">
                                 <a class="nav-link dropdown-toggle" href="#" id="dropdownStore" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-store"></i> Cửa Hàng
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownStore">
-                                    <li><a class="dropdown-item" href="@Url.Action("Profile", "Store")">Profile Cửa Hàng</a>
+                                    <li><a class="dropdown-item" href="@Url.Action("Profile", "Store")">Hồ Sơ Cửa Hàng</a>
                                     </li>
                                     <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Danh Sách Sản Phẩm</a>
                                     </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DonHang")">Quản lý đơn hàng</a></li>
                                 </ul>
                             </div>
                         }
                         @if (isAdmin != null)
                         {
-                            <div class="dropdown nav-item mx-1">
+                            <!-- Block: Quản trị viên -->
+                            <div class="dropdown mx-2">
                                 <a class="nav-link dropdown-toggle" href="#" id="dropdownAdmin" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                     Quản Lý
+                                    <i class="fa-solid fa-shield-alt fs-5 me-1"></i> Quản Lý
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="dropdownAdmin">
                                     <li><a class="dropdown-item" href="@Url.Action("Index", "NguoiDung")">Quản Lý Người Dùng</a>
                                     </li>
                                     <li><a class="dropdown-item" href="@Url.Action("Index", "DanhMuc")">Quản Lý Danh Mục</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Quản Lý Sản Phẩm</a>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Quản Lý Cửa Hàng</a>
                                     </li>
                                 </ul>
                             </div>
                         }
+                        <!-- Tài khoản và đăng xuất - Chung cho mọi loại người dùng -->
                         <a class="btn btn-outline-dark mx-1" href="@Url.Action("Profile", "Account")">
                             <i class="fa-solid fa-user"></i> 
                         </a>
@@ -105,28 +127,39 @@
                     }
                     else
                     {
+                        <!-- Block: Chưa đăng nhập -->
+                        <!-- Giỏ hàng cho khách -->
+                        <a class="nav-link position-relative mx-2"  href="@Url.Action("Index", "Cart")">
+                            <i class="fa-solid fa-cart-shopping fs-5"></i>
+                            @if (cartCount > 0)
+                            {
+                                <span class="badge bg-danger rounded-circle badge-notification">@cartCount</span>
+                            }
+                        </a>
+                        <!-- Nếu chưa đăng nhập -->
                         <a class=" btn btn-outline-dark btn" href="@Url.Action("Login", "Account")">
                             <i class="fa-solid fa-sign-in-alt"></i> Đăng Nhập
                         </a>
                     }
                 </div>
-                <!-- Button toggle Offcanvas cho mobile (hiển thị trên d-lg-none) -->
-                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#mobileOffcanvas" aria-controls="mobileOffcanvas">
+
+                <!-- Toggle button cho mobile menu -->
+                <button class="navbar-toggler d-lg-none" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#mobileOffcanvas" aria-controls="mobileOffcanvas">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
         </nav>
 
-        <!-- Offcanvas cho giao diện mobile -->
+        <!-- Menu cho Mobile - Offcanvas -->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="mobileOffcanvasLabel">Menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
             </div>
             <div class="offcanvas-body">
-                <!-- Thanh tìm kiếm ngay đầu offcanvas -->
-                <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex search-form">
+                <!-- Thanh tìm kiếm trong mobile menu -->
+                <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex search-form mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -138,66 +171,82 @@
                 </form>
                 <!-- Các mục menu -->
                 <div class="mb-3">
-                    <a class="nav-link position-relative" href="@Url.Action("Index", "Cart")">
-                        <i class="fa-solid fa-cart-shopping"></i>
+                    <a class="nav-link position-relative d-flex align-items-center" href="@Url.Action("Index", "Cart")">
+                        <i class="fa-solid fa-cart-shopping me-2"></i>
+                        <span class="ms-1">Giỏ hàng</span>
                         @if (cartCount > 0)
                         {
                             <span class="badge bg-danger rounded-circle badge-notification">@cartCount</span>
                         }
-                        <span class="ms-1">Giỏ hàng</span>
                     </a>
                 </div>
                 @if (user != null)
                 {
+                    <!-- Menu cho người dùng đã đăng nhập -->
                     <div class="mb-3">
-                        <a class="nav-link" href="@Url.Action("Profile", "Account")">
-                            <i class="fa-solid fa-user"></i> Tài khoản của bạn
+                        <a class="nav-link d-flex align-items-center" href="@Url.Action("Profile", "Account")">
+                            <i class="fa-solid fa-user me-2"></i> Tài khoản của bạn
                         </a>
                     </div>
+
+                    <div class="mb-3">
+                        <a class="nav-link d-flex align-items-center" href="@Url.Action("Index", "DonHang")">
+                            <i class="fa-solid fa-file-invoice me-2"></i> Đơn hàng của bạn
+                        </a>
+                    </div>
+
                     @if (isSeller != null)
                     {
+                        <!-- Menu cho người bán -->
                         <div class="mb-3">
+                            <h6 class="dropdown-header">Quản lý cửa hàng</h6>
                             <a class="nav-link" href="@Url.Action("Profile", "Store")">
-                                <i class="fa-solid fa-store"></i> Profile Cửa Hàng
+                                <i class="fa-solid fa-store"></i> Hồ Sơ Cửa Hàng
                             </a>
                             <a class="nav-link" href="@Url.Action("Index", "SanPham")">
                                 <i class="fa-solid fa-boxes"></i> Danh Sách Sản Phẩm
                             </a>
+                            
                         </div>
                     }
                     @if (isAdmin != null)
                     {
+                        <!-- Menu cho quản trị viên -->
                         <div class="mb-3">
-                            <a class="nav-link" href="@Url.Action("Index", "NguoiDung")">
-                                <i class="fa-solid fa-users"></i> Quản Lý Người Dùng
+                            <h6 class="dropdown-header">Quản trị</h6>
+                            <a class="nav-link ps-3 d-flex align-items-center" href="@Url.Action("Index", "NguoiDung")">
+                                <i class="fa-solid fa-users me-2"></i> Quản lý người dùng
                             </a>
-                            <a class="nav-link" href="@Url.Action("Index", "DanhMuc")">
-                                <i class="fa-solid fa-folder"></i> Quản Lý Danh Mục
+                            <a class="nav-link ps-3 d-flex align-items-center" href="@Url.Action("Index", "DanhMuc")">
+                                <i class="fa-solid fa-folder me-2"></i> Quản lý danh mục
                             </a>
-                            <a class="nav-link" href="@Url.Action("Index", "SanPham")">
-                                <i class="fa-solid fa-cubes"></i> Quản Lý Sản Phẩm
+                            <a class="nav-link ps-3 d-flex align-items-center" href="@Url.Action("Index", "SanPham")">
+                                <i class="fa-solid fa-cubes me-2"></i> Quản lý sản phẩm
                             </a>
                         </div>
                     }
-                    <div>
-                        <a class="nav-link btn btn-outline-danger" href="@Url.Action("Logout", "Account")">
-                            <i class="fa-solid fa-sign-out-alt"></i> Đăng Xuất
+                    <!-- Nút đăng xuất -->
+                    <div class="mt-4">
+                        <a class="btn btn-outline-danger w-100" href="@Url.Action("Logout", "Account")">
+                            <i class="fa-solid fa-sign-out-alt me-1"></i> Đăng xuất
                         </a>
                     </div>
                 }
                 else
                 {
-                    <div class="mb-3">
-                        <a class="nav-link btn btn-dark" href="@Url.Action("Login", "Account")">
-                            <i class="fa-solid fa-sign-in-alt"></i> Đăng Nhập
+                    <!-- Menu cho khách -->
+                    <div class="mt-3">
+                        <a class="btn btn-dark w-100" href="@Url.Action("Login", "Account")">
+                            <i class="fa-solid fa-sign-in-alt me-1"></i> Đăng nhập
                         </a>
                     </div>
                 }
             </div>
         </div>
+
     </header>
 
-    <main class="container my-3">
+    <main class="container my-4">
         @RenderBody()
     </main>
     <!-- Thêm phần này trước thẻ đóng </body> -->
@@ -277,7 +326,23 @@
             </div>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <!-- Script kiểm tra Bootstrap -->
+    <script>
+        $(document).ready(function () {
+            // Kiểm tra jQuery và Bootstrap đã tải hay chưa
+            console.log('Layout loaded - jQuery version:', $.fn.jquery);
+            console.log('Bootstrap loaded:', typeof bootstrap !== 'undefined');
+
+            // Đảm bảo dropdown được khởi tạo
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+        });
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 

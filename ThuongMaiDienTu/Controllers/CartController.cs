@@ -16,6 +16,7 @@ namespace ThuongMaiDienTu.Controllers
         public IActionResult Index()
         {
             var cart = CartHelper.GetCart(HttpContext.Session);
+            ViewBag.CoSanPham = cart.Count > 0;
             return View(cart);
         }
 

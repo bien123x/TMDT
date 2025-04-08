@@ -1,11 +1,18 @@
-﻿
+/* Custom Banner */
+.custom-banner {
+    max-width: 100%; /* Chiếm toàn bộ chiều ngang của container-fluid */
+    padding: 0; /* Loại bỏ padding mặc định nếu cần */
+}
+
+    .custom-banner .carousel-inner img {
+        width: 100%;
+        height: 400px; /* Tùy chỉnh chiều cao banner, bạn có thể thay đổi */
+        object-fit: cover; /* Đảm bảo ảnh không bị méo, nằm trọn trong khung */
+        border-radius: 5px; /* Bo góc nhẹ cho ảnh */
+    }
+
+/* Filter Container */
 .filter-container {
-    transform: translateX(500px);
-    transform: translateY(10px);
-    margin: 20px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 10px;
 }
 
@@ -15,24 +22,12 @@
         color: #000;
     }
 
-select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-
-/* Danh sách sản phẩm */
+/* Product List */
 .product-list {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 25px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: auto;
+    /* Dùng Bootstrap row/col, không cần định nghĩa grid ở đây */
 }
 
-/* Mỗi sản phẩm */
+/* Product Item */
 .product-item {
     background: #eaeaea;
     padding: 15px;
@@ -48,7 +43,7 @@ select {
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     }
 
-/* Ảnh sản phẩm */
+/* Product Image */
 .product-image img {
     width: 100%;
     height: 180px;
@@ -56,7 +51,7 @@ select {
     border-radius: 5px;
 }
 
-/* Định dạng link sản phẩm */
+/* Product Link */
 .product-item a {
     text-decoration: none;
     color: black;
@@ -68,41 +63,26 @@ select {
     color: black;
 }
 
-/* Thông tin sản phẩm */
+/* Product Info */
 .product-item p {
     margin: 8px 0;
     font-size: 14px;
 }
 
-    /* Tên sản phẩm */
     .product-item p strong {
         font-size: 16px;
         font-weight: bold;
         color: #333;
     }
 
-    /* Giá gốc */
     .product-item p:nth-of-type(2) {
-        color: #666;
-        font-size: 13px;
+        color: red;
+        font-weight: bold;
+        font-size: 14px;
     }
 
-/* Giá gạch ngang */
-.product-item del {
-    color: #888;
-    font-size: 13px;
-}
-
-/* Giá giảm */
-.product-item p:nth-of-type(4) {
-    color: red;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-/* Giá khuyến mãi */
-.product-item p:last-child {
-    color: #d0021b;
-    font-size: 16px;
-    font-weight: bold;
-}
+    .product-item p:last-child {
+        color: #d0021b;
+        font-size: 16px;
+        font-weight: bold;
+    }

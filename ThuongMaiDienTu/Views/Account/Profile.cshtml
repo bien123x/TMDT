@@ -15,7 +15,15 @@
             <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
             <li class="list-group-item"><strong>Mật khẩu:</strong> *****</li>
             <li class="list-group-item"><strong>Số điện thoại:</strong> @(Model.So_Dien_Thoai ?? "Chưa cập nhật")</li>
-            <li class="list-group-item"><strong>Vai trò:</strong> @(Model.Vai_Tro_Id == 1 ? "Người Mua" : "Người Bán")</li>
+            @*<li class="list-group-item"><strong>Vai trò:</strong> @(Model.Vai_Tro_Id == 1 ? "Người Mua" : "Người Bán")</li>*@
+
+            <li class="list-group-item">
+                <strong>Vai trò:</strong>
+                @(Model.Vai_Tro_Id == 1 ? "Người Mua" :
+                    (Model.Vai_Tro_Id == 2 ? "Người Bán" : "Quản Trị"))
+            </li>
+
+
             <li class="list-group-item"><strong>Ngày tạo:</strong> @Model.Ngay_Tao.ToString("dd/MM/yyyy")</li>
         </ul>
 

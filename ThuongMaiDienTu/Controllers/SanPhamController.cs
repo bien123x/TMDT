@@ -136,16 +136,18 @@ namespace ThuongMaiDienTu.Controllers
         public IActionResult ChiTietSanPham(int id)
         {
             var sanPham = _sanPhamRepository.GetSanPhamWithDanhGia(id);
-
             if (sanPham == null)
             {
                 return NotFound();
             }
 
-            // ✅ Lấy danh sách đánh giá
             var danhGiaList = sanPham.DanhGias.ToList();
             double trungBinhSao = danhGiaList.Any() ? danhGiaList.Average(d => d.So_Sao) : 0;
             int tongDanhGia = danhGiaList.Count();
+
+            var userVaiTroId = HttpContext.Session.GetInt32("VaiTroId") ?? 0;
+            Console.WriteLine($"VaiTroId từ session: {userVaiTroId}"); // Debug
+            ViewBag.UserVaiTroId = userVaiTroId;
 
             ViewBag.TrungBinhSao = trungBinhSao;
             ViewBag.TongDanhGia = tongDanhGia;
@@ -154,5 +156,119 @@ namespace ThuongMaiDienTu.Controllers
             return View(sanPham);
         }
 
+        [HttpPost]
+        public IActionResult DeleteDanhGia(int id, int danhGiaId)
+        {
+            var userVaiTroId = HttpContext.Session.GetInt32("VaiTroId") ?? 0;
+            if (userVaiTroId != 3)
+            {
+                TempData["Error"] = "Bạn không có quyền xóa đánh giá!";
+                return RedirectToAction("ChiTietSanPham", new { id });
+            }
+
+            var danhGia = _context.DanhGias.Find(danhGiaId);
+            if (danhGia == null)
+            {
+                TempData["Error"] = "Đánh giá không tồn tại!";
+                return RedirectToAction("ChiTietSanPham", new { id });
+            }
+
+            _context.DanhGias.Remove(danhGia);
+            _context.SaveChanges();
+
+            TempData["Success"] = "Xóa đánh giá thành công!";
+            return RedirectToAction("ChiTietSanPham", new { id });
+        }
+
+        // GET: SanPhamController/DanhGia/5
+        // GET: SanPhamController/DanhGia/5
+        public IActionResult DanhGia(int id, int donHangId)
+        {
+            var sanPham = _sanPhamRepository.GetById(id);
+            if (sanPham == null)
+            {
+                return NotFound();
+            }
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["Error"] = "Vui lòng đăng nhập để đánh giá sản phẩm!";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var danhGia = new DanhGia
+            {
+                Id_San_Pham = id,
+                Id_Nguoi_Mua = userId.Value,
+                So_Sao = 5 // Giá trị mặc định
+            };
+
+            ViewBag.TenSanPham = sanPham.Ten_San_Pham;
+            ViewBag.DonHangId = donHangId; // Lưu id đơn hàng vào ViewBag
+            return View(danhGia);
+        }
+
+        // POST: SanPhamController/DanhGia
+        [HttpPost]
+        public IActionResult DanhGia(DanhGia danhGia, int donHangId)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
+                if (userId == null || danhGia.Id_Nguoi_Mua != userId)
+                {
+                    TempData["Error"] = "Bạn không có quyền đánh giá sản phẩm này!";
+                    return RedirectToAction("ChiTietSanPham", new { id = danhGia.Id_San_Pham });
+                }
+
+                // Xử lý upload hình ảnh nếu có
+                if (danhGia.HinhAnhFile != null && danhGia.HinhAnhFile.Length > 0)
+                {
+                    string fileName = Path.GetFileName(danhGia.HinhAnhFile.FileName);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\DanhGia", fileName);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        danhGia.HinhAnhFile.CopyTo(stream);
+                    }
+
+                    danhGia.Hinh_Anh = "/images/DanhGia/" + fileName;
+                }
+
+                // Đảm bảo không gán giá trị cho Id
+                danhGia.Id = 0; // Đặt Id về 0 để Entity Framework bỏ qua và để SQL Server tự tạo
+
+                // Lưu đánh giá vào cơ sở dữ liệu
+                _context.DanhGias.Add(danhGia);
+                _context.SaveChanges();
+
+                // Truyền thông báo thành công qua ViewBag hoặc TempData
+                ViewBag.SuccessMessage = "Đánh giá của bạn đã được gửi thành công!";
+
+                // Tạo một đối tượng DanhGia mới để làm sạch form
+                var newDanhGia = new DanhGia
+                {
+                    Id_San_Pham = danhGia.Id_San_Pham,
+                    Id_Nguoi_Mua = userId.Value,
+                    So_Sao = 5 // Giá trị mặc định
+                };
+
+                // Truyền lại các giá trị cần thiết cho view
+                var sanPham = _sanPhamRepository.GetById(danhGia.Id_San_Pham);
+                ViewBag.TenSanPham = sanPham?.Ten_San_Pham;
+                ViewBag.DonHangId = donHangId;
+
+                return View(newDanhGia); // Trả về view DanhGia.cshtml với form mới
+            }
+
+            // Nếu ModelState không hợp lệ, trả lại view với dữ liệu hiện tại
+            var sanPhamError = _sanPhamRepository.GetById(danhGia.Id_San_Pham);
+            ViewBag.TenSanPham = sanPhamError?.Ten_San_Pham;
+            ViewBag.DonHangId = donHangId;
+            return View(danhGia);
+        }
     }
 }

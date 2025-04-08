@@ -3,27 +3,6 @@
     ViewData["Title"] = "Đăng Nhập";
 }
 
-@* <h3 class="text-center">Đăng Nhập</h3>
-
-<form method="post" asp-action="Login" asp-controller="Account">
-    <div class="mb-3">
-        <label for="username" class="form-label">Email/Số Điện Thoại</label>
-        <input id="username" name="username" type="text" class="form-control">
-    </div>
-
-    <div class="mb-3">
-        <label for="password" class="form-label">Mật khẩu</label>
-        <input id="password" name="password" type="password" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-primary w-100">Đăng Nhập</button>
-</form>
-@if (ViewBag.Error != "")
-{
-    <h5 class="text-danger">@ViewBag.Error</h5>
-}
-<div>
-    <h4>Bạn chưa có tài khoản?<a href="@Url.Action("Register", "Account")">Đăng ký</a></h4>
-</div> *@
 
 <div class="sidenav">
     <div class="login-main-text">

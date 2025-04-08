@@ -12,7 +12,7 @@ namespace ThuongMaiDienTu.Models
         public int Id { get; set; } // Khóa chính
 
         [Required]
-        public int Id_Nguoi_Mua { get; set; } // Mã người mua
+        public int? Id_Nguoi_Mua { get; set; } // Mã người mua
         [ForeignKey("Id_Nguoi_Mua")]
         public virtual NguoiDung? NguoiDung { get; set; }
 
@@ -22,10 +22,15 @@ namespace ThuongMaiDienTu.Models
         public virtual TrangThaiDonHang? TrangThaiDonHang { get; set; }
 
         [Required]
-        [Precision(10, 2)]
+        [Precision(18, 2)]
         public decimal Tong_Tien { get; set; } // Tổng tiền đơn hàng
 
         [Required]
         public DateTime Ngay_Tao = DateTime.Now; // Ngày tạo đơn hàng
+
+        public virtual ICollection<VanChuyen>? VanChuyens { get; set; }
+        public virtual ICollection<ThanhToan>? ThanhToans { get; set; }
+        public virtual ICollection<ChiTietDonHang>? ChiTietDonHangs { get; set; } // Danh sách chi tiết đơn hàng
+
     }
 }

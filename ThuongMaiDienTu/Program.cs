@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ThuongMaiDienTu.Data;
+using ThuongMaiDienTu.Middleware;
 using ThuongMaiDienTu.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddScoped<IBannerRepository, BannerRepository>();
 builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
 builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 builder.Services.AddScoped<INguoiDungRepository, NguoiDungRepository>();
+builder.Services.AddScoped<IDonHangRepository, DonHangRepository>();
+
 
 
 builder.Services.AddSession(options =>
@@ -25,6 +28,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -37,12 +41,17 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseSession();
 
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseMiddleware<BlockDirectAccessMiddleware>();
+
 
 app.MapControllerRoute(
     name: "default",

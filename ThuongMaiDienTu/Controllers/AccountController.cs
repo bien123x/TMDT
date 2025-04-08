@@ -33,30 +33,37 @@ namespace ThuongMaiDienTu.Controllers
 
             if (nguoiDung.Any(nd => nd.Mat_Khau == password))
             {
-                var userId = _context.NguoiDungs
-                    .Where(u => u.Email == username || u.So_Dien_Thoai == username)
-                    .Select(u => u.Id)
-                    .FirstOrDefault();
+                var user = nguoiDung.First(nd => nd.Mat_Khau == password);
+                var userId = user.Id;
                 HttpContext.Session.SetInt32("UserId", userId);
-                var checkSeller = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 2);
-                var checkAdmin = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 3);
+                HttpContext.Session.SetInt32("VaiTroId", user.Vai_Tro_Id); // Đảm bảo lưu VaiTroId
+
+                var checkSeller = user.Vai_Tro_Id == 2;
+                var checkAdmin = user.Vai_Tro_Id == 3;
+
                 if (checkSeller)
                 {
                     HttpContext.Session.SetInt32("IsSeller", 1);
                     if (!_context.CuaHangs.Any(ch => ch.Id_Nguoi_Ban == userId))
                     {
-                        var cuaHang = _context.CuaHangs.FirstOrDefault(ch => ch.Id_Nguoi_Ban == userId);
-                        HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
                         return RedirectToAction("Create", "Store");
                     }
+                    else
+                    {
+                        var cuaHang = _context.CuaHangs.FirstOrDefault(ch => ch.Id_Nguoi_Ban == userId);
+                        HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
+                    }
                 }
+
                 if (checkAdmin)
                 {
-                    HttpContext.Session.SetInt32("IsAdmin", 1);
+                    HttpContext.Session.SetInt32("IsAdmin", 1); // Đảm bảo lưu IsAdmin
+                    return RedirectToAction("Index", "Home");
                 }
+
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.Error = "Tên Đăng nhập hoặc mật khẩu sai!";
+            ViewBag.Error = "Tên đăng nhập hoặc mật khẩu sai!";
             return View();
         }
         [HttpPost]

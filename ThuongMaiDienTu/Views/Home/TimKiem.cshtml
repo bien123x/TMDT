@@ -5,35 +5,139 @@
 
 @model List<ThuongMaiDienTu.Models.SanPham>
 
-<link rel="stylesheet" href="@Url.Content("~/css/TimKiem.css")">
+<link href="~/css/TimKiem.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-
 <main>
-    <h2>Kết Quả Tìm Kiếm: "@ViewBag.TuKhoa"</h2>
+    <div class="container">
+        <h2 class="my-4">Kết Quả Tìm Kiếm: "@ViewBag.TuKhoa"</h2>
 
-    @if (Model.Count == 0)
-    {
-        <p>Không tìm thấy sản phẩm nào.</p>
-    }
-    else
-    {
-        <div class="product-list">
-            @foreach (var sanPham in Model)
-            {
-                <div class="product-item">
-                    <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })">
-                        <div class="product-image">
-                            <img src="@Url.Content(sanPham.Hinh_Anh)" alt="@sanPham.Ten_San_Pham" style="width:100%; height:180px; object-fit:cover;">
+        @if (Model.Count == 0)
+        {
+            <p>Không tìm thấy sản phẩm nào.</p>
+        }
+        else
+        {
+            <!-- Danh sách sản phẩm với Bootstrap grid -->
+            <div class="product-list row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4" id="productList">
+                @foreach (var sanPham in Model)
+                {
+                    <div class="col">
+                        <div class="product-item h-100">
+                            <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })">
+                                <div class="product-image">
+                                    @{
+                                        string defaultImage = "~/images/logo.png";
+                                        string imageUrl = string.IsNullOrEmpty(sanPham.Hinh_Anh) ? defaultImage : sanPham.Hinh_Anh;
+                                    }
+                                    <img src="@Url.Content(imageUrl)" alt="@sanPham.Ten_San_Pham" class="img-fluid">
+                                </div>
+                                <p><strong>@sanPham.Ten_San_Pham</strong></p>
+                                <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
+                                <p style="font-weight: bold;">Giá khuyến mãi: @(sanPham.Gia_Goc - sanPham.Giam_Gia) VNĐ</p>
+                            </a>
                         </div>
-                        <p><strong>@sanPham.Ten_San_Pham</strong></p>
-                        <p>Giá: <del>@sanPham.Gia_Goc.ToString("N0") VNĐ</del></p>
-                        <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
-                        <p style="font-weight: bold;">Giá khuyến mãi: @(sanPham.Gia_Goc - sanPham.Giam_Gia) VNĐ</p>
-                    </a> 
-                </div>
-            }
+                    </div>
+                }
+            </div>
 
-        </div>
-    }
+            <!-- Phân trang -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center" id="pagination">
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="#" data-page="@(ViewBag.CurrentPage - 1)">Trước</a>
+                        </li>
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="#" data-page="@i">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="#" data-page="@(ViewBag.CurrentPage + 1)">Tiếp</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        }
+    </div>
 </main>
+
+<script>
+    // Hàm tải sản phẩm tìm kiếm với phân trang
+    function loadSearchProducts(page, tuKhoa) {
+        var url = '@Url.Action("GetSearchProducts", "Home")' + '?tuKhoa=' + encodeURIComponent(tuKhoa) + '&page=' + page;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data received:', data); // Kiểm tra dữ liệu
+                var productList = document.getElementById('productList');
+                productList.innerHTML = ''; // Xóa danh sách cũ
+                data.products.forEach(function (sp) {
+                    var html = `
+                        <div class="col">
+                            <div class="product-item h-100">
+                                <a href="@Url.Action("ChiTietSanPham", "SanPham")/${sp.id}">
+                                    <div class="product-image">
+                                        <img src="${sp.hinh_Anh}" alt="${sp.ten_San_Pham}" class="img-fluid" onerror="this.src='/images/default-product-image.jpg'">
+                                    </div>
+                                    <p><strong>${sp.ten_San_Pham}</strong></p>
+                                    <p style="color:red;">Giảm giá: ${sp.giam_Gia ? sp.giam_Gia.toLocaleString() : 0} VNĐ</p>
+                                    <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Goc - (sp.giam_Gia || 0)).toLocaleString()} VNĐ</p>
+                                </a>
+                            </div>
+                        </div>`;
+                    productList.innerHTML += html;
+                });
+
+                // Cập nhật phân trang
+                var pagination = document.getElementById('pagination');
+                pagination.innerHTML = '';
+                pagination.innerHTML += `
+                    <li class="page-item ${data.currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${data.currentPage - 1}">Trước</a>
+                    </li>`;
+                for (let i = 1; i <= data.totalPages; i++) {
+                    pagination.innerHTML += `
+                        <li class="page-item ${i === data.currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>`;
+                }
+                pagination.innerHTML += `
+                    <li class="page-item ${data.currentPage === data.totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${data.currentPage + 1}">Tiếp</a>
+                    </li>`;
+
+                attachPaginationEvents(tuKhoa);
+            })
+            .catch(error => console.error('Error fetching search products:', error));
+    }
+
+    // Hàm gắn sự kiện cho phân trang
+    function attachPaginationEvents(tuKhoa) {
+        var paginationLinks = document.querySelectorAll('#pagination .page-link');
+        paginationLinks.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var page = this.getAttribute('data-page');
+                loadSearchProducts(page, tuKhoa);
+            });
+        });
+    }
+
+    // Gắn sự kiện phân trang khi trang được tải lần đầu
+    document.addEventListener('DOMContentLoaded', function () {
+        var tuKhoa = '@Html.Raw(ViewBag.TuKhoa)';
+        var initialPage = @Html.Raw(ViewBag.CurrentPage ?? 1);
+        attachPaginationEvents(tuKhoa);
+    });
+</script>
+

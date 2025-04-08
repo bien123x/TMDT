@@ -1,10 +1,4 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f9f9f9;
-}
-
+﻿
 
 .logo {
     display: flex;
@@ -114,3 +108,184 @@ body {
     padding-top: 10px;
 }
 
+
+/* Responsive */
+@media (max-width: 768px) {
+    header {
+        padding: 10px 15px; /* Thu nhỏ padding */
+    }
+
+    .logo {
+        font-size: 16px; /* Thu nhỏ chữ */
+    }
+
+    .logo-img {
+        width: 25px; /* Thu nhỏ ảnh logo */
+        margin-right: 8px;
+    }
+
+    .search-bar {
+        padding-right: 100px; /* Giảm padding */
+        transform: translateX(80px); /* Giảm dịch chuyển */
+    }
+
+        .search-bar input {
+            padding: 6px;
+            width: 180px; /* Thu nhỏ input */
+        }
+
+        .search-bar button {
+            padding: 6px 10px; /* Thu nhỏ button */
+        }
+
+    .DangNhap {
+        transform: translateX(-40px); /* Giảm dịch chuyển */
+    }
+
+        .DangNhap .BtnDangNhap {
+            padding: 6px 10px; /* Thu nhỏ button */
+        }
+
+    .icons {
+        font-size: 16px; /* Thu nhỏ icon */
+        transform: translateX(60px); /* Giảm dịch chuyển */
+    }
+
+        .icons i {
+            margin: 0 8px;
+        }
+
+    main {
+        margin-top: 70px; /* Giảm margin-top */
+        padding: 15px;
+        margin-left: 40px; /* Giảm margin-left */
+    }
+
+    .product-detail {
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .image img {
+        width: 300px; /* Thu nhỏ ảnh */
+        height: 300px;
+    }
+
+    .info h1 {
+        font-size: 20px; /* Thu nhỏ chữ */
+    }
+
+    .info p {
+        font-size: 14px; /* Thu nhỏ chữ */
+    }
+
+    .add-to-cart {
+        padding: 8px 15px; /* Thu nhỏ button */
+        margin-top: 15px;
+    }
+
+    .description, .review {
+        padding: 15px;
+        margin: 15px;
+    }
+
+    h2, h3 {
+        font-size: 18px; /* Thu nhỏ chữ */
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 8px 10px; /* Thu nhỏ thêm */
+    }
+
+    .logo {
+        font-size: 14px; /* Thu nhỏ thêm */
+    }
+
+    .logo-img {
+        width: 20px; /* Thu nhỏ thêm */
+        margin-right: 5px;
+    }
+
+    .search-bar {
+        padding-right: 60px; /* Giảm thêm */
+        transform: translateX(40px); /* Giảm thêm */
+    }
+
+        .search-bar input {
+            padding: 5px;
+            width: 120px; /* Thu nhỏ thêm */
+        }
+
+        .search-bar button {
+            padding: 5px 8px; /* Thu nhỏ thêm */
+        }
+
+    .DangNhap {
+        transform: translateX(-20px); /* Giảm thêm */
+    }
+
+        .DangNhap .BtnDangNhap {
+            padding: 5px 8px; /* Thu nhỏ thêm */
+        }
+
+    .icons {
+        font-size: 14px; /* Thu nhỏ thêm */
+        transform: translateX(30px); /* Giảm thêm */
+    }
+
+        .icons i {
+            margin: 0 5px;
+        }
+
+    main {
+        margin-top: 60px; /* Giảm thêm */
+        padding: 10px;
+        margin-left: 20px; /* Giảm thêm */
+    }
+
+    .product-detail {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .image img {
+        width: 200px; /* Thu nhỏ thêm */
+        height: 200px;
+    }
+
+    .info h1 {
+        font-size: 16px; /* Thu nhỏ thêm */
+    }
+
+    .info p {
+        font-size: 12px; /* Thu nhỏ thêm */
+    }
+
+    .add-to-cart {
+        padding: 6px 10px; /* Thu nhỏ thêm */
+        margin-top: 10px;
+    }
+
+    .description, .review {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    h2, h3 {
+        font-size: 16px; /* Thu nhỏ thêm */
+    }
+}
+
+
+.review-image {
+    margin-top: 10px;
+}
+
+    .review-image img {
+        max-width: 200px; /* Giới hạn chiều rộng tối đa của hình ảnh */
+        height: auto; /* Giữ tỷ lệ hình ảnh */
+        border-radius: 5px; /* Bo góc hình ảnh */
+        box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Thêm bóng nhẹ */
+    }
