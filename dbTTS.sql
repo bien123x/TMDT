@@ -41,6 +41,8 @@ CREATE TABLE [cua_hang] (
 GO
 ALTER TABLE cua_hang
 ALTER COLUMN ten_cua_hang NVARCHAR(255);
+ALTER TABLE cua_hang
+ADD trang_thai BIT NOT NULL DEFAULT 1;
 
 ALTER TABLE cua_hang
 ALTER COLUMN mo_ta NVARCHAR(MAX);

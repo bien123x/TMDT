@@ -17,7 +17,7 @@ else
                         @{
                             string imageUrl = !string.IsNullOrEmpty(sanPham.Hinh_Anh)
                             ? sanPham.Hinh_Anh
-                            : "/images/default-product-image.jpg";
+                            : "~/images/logo.png";
                         }
                         <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })">
                             <img src="@Url.Content(imageUrl)" class="card-img-top" alt="@sanPham.Ten_San_Pham"

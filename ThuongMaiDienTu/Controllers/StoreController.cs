@@ -18,7 +18,8 @@ namespace ThuongMaiDienTu.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var storeList = _repository.GetAll().ToList();
+            return View(storeList);
         }
 
         public IActionResult Create()
@@ -47,15 +48,20 @@ namespace ThuongMaiDienTu.Controllers
         }
 
         [HttpPatch]
-        public IActionResult Edit([FromBody] CuaHang cuaHangSua)
+        [Route("Store/Edit/{id}")]
+        public IActionResult Edit(int id, [FromBody] CuaHang cuaHangSua)
         {
             ModelState.Clear();
             TryValidateModel(cuaHangSua, nameof(cuaHangSua.Ten_Cua_Hang));
             TryValidateModel(cuaHangSua, nameof(cuaHangSua.Mo_Ta));
             if (ModelState.IsValid)
             {
-                var storeId = (int)HttpContext.Session.GetInt32("StoreId");
-                var cuaHang = _repository.GetById(storeId);
+                var cuaHang = _repository.GetById(id);
+                if (cuaHang == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy cửa hàng" });
+                }
+
                 cuaHang.Ten_Cua_Hang = cuaHangSua.Ten_Cua_Hang;
                 cuaHang.Mo_Ta = cuaHangSua.Mo_Ta;
 
@@ -63,7 +69,41 @@ namespace ThuongMaiDienTu.Controllers
                 return Json(new { success = true, message = "Cập nhật thành công!" });
             }
 
-            return Json(new { success = false, message = "Cập nhật thất bại" });
+            return Json(new { success = false, message = "Cập nhật thất bại", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+        }
+        [HttpGet]
+        public IActionResult GetStoreData(int id)
+        {
+            var store = _repository.GetById(id);
+            if (store == null)
+            {
+                return NotFound();
+            }
+
+            return Json(new
+            {
+                id = store.Id,
+                tenCuaHang = store.Ten_Cua_Hang,
+                moTa = store.Mo_Ta,
+                trangThai = store.Trang_Thai
+            });
+        }
+
+        [HttpPost]
+        public IActionResult ToggleStoreStatus([FromBody]  int id)
+        {
+            var store = _repository.GetById(id);
+            if (store == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy cửa hàng" });
+            }
+
+            // Đảo ngược trạng thái
+            store.Trang_Thai = !store.Trang_Thai;
+            _repository.Update(store);
+
+            string message = store.Trang_Thai ? "Cửa hàng đã được mở khóa" : "Cửa hàng đã bị khóa";
+            return Json(new { success = true, message = message, newStatus = store.Trang_Thai });
         }
 
         public IActionResult Profile()

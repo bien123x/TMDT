@@ -1,5 +1,536 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<ThuongMaiDienTu.Models.CuaHang>
 @{
+    ViewData["Title"] = "Quản lý cửa hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0 text-primary">
+            <i class="fas fa-store me-2"></i>Quản lý cửa hàng
+        </h3>
+        <a href="@Url.Action("Create", "Store")" class="btn btn-success">
+            <i class="fas fa-plus me-1"></i> Thêm cửa hàng mới
+        </a>
+    </div>
+
+    <!-- Hiển thị dữ liệu dạng grid -->
+    <div id="storeGridView" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        @foreach (var item in Model)
+        {
+            <div class="col store-item" data-store-id="@item.Id" data-store-name="@item.Ten_Cua_Hang"
+                data-store-date="@item.Ngay_Tao.Ticks">
+                <div class="card h-100 border-1 hover-shadow" id="store-card-@item.Id">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-0">
+                        <h5 class="mb-0 text-truncate">@item.Ten_Cua_Hang</h5>
+                            <span class="badge bg-primary rounded-pill me-1">ID: @item.Id</span>
+                            @if (item.Trang_Thai)
+                            {
+                                <span class="badge bg-success" id="status-badge-@item.Id">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger" id="status-badge-@item.Id">Đã khóa</span>
+                            }
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                Ngày tạo: @item.Ngay_Tao.ToString("dd/MM/yyyy")
+                            </small>
+                        </div>
+                        <p class="card-text description-text" id="store-desc-@item.Id">
+                            @if (item.Mo_Ta != null && item.Mo_Ta.Length > 100)
+                            {
+                                <span title="@item.Mo_Ta">@(item.Mo_Ta.Substring(0, 100) + "...")</span>
+                            }
+                            else
+                            {
+                                @(item.Mo_Ta ?? "Không có mô tả")
+                            }
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("ProfileStore", "Store", new { id = item.Id })"
+                                    class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                    <i class="fas fa-info-circle"></i> Xem chi tiết
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-warning edit-store-btn"
+                                    data-store-id="@item.Id" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i> Sửa thông tin
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm @(item.Trang_Thai ? "btn-outline-danger" : "btn-outline-success") toggle-status-btn"
+                                    data-store-id="@item.Id" data-current-status="@(item.Trang_Thai ? "active" : "locked")" 
+                                    title="@(item.Trang_Thai ? "Khóa cửa hàng" : "Mở khóa cửa hàng")">
+                                @if (item.Trang_Thai)
+                                {
+                                    <i class="fas fa-lock"></i> <span id="toggle-text-@item.Id">Khóa</span>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-lock-open"></i> <span id="toggle-text-@item.Id">Mở khóa</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Hiển thị dữ liệu dạng list (ẩn mặc định) -->
+    <div id="storeListView" class="d-none">
+        <div class="card shadow-sm">
+            <div class="list-group list-group-flush">
+                @foreach (var item in Model)
+                {
+                    <div class="list-group-item p-3 store-item @(!item.Trang_Thai ? "bg-light-danger" : "")" 
+                    data-store-id="@item.Id" data-store-name="@item.Ten_Cua_Hang" 
+                    data-store-date="@item.Ngay_Tao.Ticks" data-store-status="@(item.Trang_Thai ? "active" : "locked")">
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center">
+                                    <h5 class="mb-1" id="store-list-name-@item.Id">@item.Ten_Cua_Hang</h5>
+                                    @if (item.Trang_Thai)
+                                    {
+                                        <span class="badge bg-success ms-2" id="list-status-badge-@item.Id">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger ms-2" id="list-status-badge-@item.Id">Đã khóa</span>
+                                    }
+                                </div>
+                                <p class="mb-1 text-muted small">
+                                    ID: @item.Id | Ngày tạo: @item.Ngay_Tao.ToString("dd/MM/yyyy")
+                                </p>
+                                <p class="mb-0 text-truncate" style="max-width: 400px;" id="store-list-desc-@item.Id">
+                                    @(item.Mo_Ta ?? "Không có mô tả")
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                @{
+                                    string sellerName = "Không xác định";
+                                    if (ViewBag.Sellers != null && ViewBag.Sellers.ContainsKey(item.Id_Nguoi_Ban))
+                                    {
+                                        sellerName = ViewBag.Sellers[item.Id_Nguoi_Ban].Ho_Ten;
+                                    }
+
+                                    var productCount = 0;
+                                    if (ViewBag.ProductCounts != null && ViewBag.ProductCounts.ContainsKey(item.Id))
+                                    {
+                                        productCount = ViewBag.ProductCounts[item.Id];
+                                    }
+                                }
+                                <span class="badge bg-light text-dark me-2">
+                                    <i class="fas fa-user me-1"></i>
+                                    @sellerName
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-box me-1"></i>
+                                    @productCount sản phẩm
+                                </span>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <div class="btn-group">
+                                    <a href="@Url.Action("ProfileStore", "Store", new { id = item.Id })"
+                                        class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-warning edit-store-btn"
+                                        data-store-id="@item.Id" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm @(item.Trang_Thai ? "btn-outline-danger" : "btn-outline-success") toggle-status-btn"
+                                            data-store-id="@item.Id" data-current-status="@(item.Trang_Thai ? "active" : "locked")"
+                                            title="@(item.Trang_Thai ? "Khóa cửa hàng" : "Mở khóa cửa hàng")">
+                                        @if (item.Trang_Thai)
+                                        {
+                                            <i class="fas fa-lock"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-lock-open"></i>
+                                        }
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal chỉnh sửa cửa hàng -->
+<div class="modal fade" id="editStoreModal" tabindex="-1" aria-labelledby="editStoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editStoreModalLabel">Chỉnh sửa thông tin cửa hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editStoreForm">
+                    <input type="hidden" id="editStoreId" name="id" />
+                    <div class="mb-3">
+                        <label for="editStoreName" class="form-label">Tên cửa hàng</label>
+                        <input type="text" class="form-control" id="editStoreName" name="tenCuaHang" required>
+                        <div class="invalid-feedback" id="editStoreNameFeedback"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editStoreDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="editStoreDescription" name="moTa" rows="5"></textarea>
+                        <div class="invalid-feedback" id="editStoreDescriptionFeedback"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="saveStoreChanges">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal xác nhận khóa/mở khóa cửa hàng -->
+<div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="toggleStatusModalLabel">Xác nhận thay đổi trạng thái</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="toggleStatusMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmToggleStatus">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Toast thông báo -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="storeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Thông báo</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Khởi tạo toast
+            const toastElement = document.getElementById('storeToast');
+            const toast = new bootstrap.Toast(toastElement);
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Khởi tạo modal
+            const editModal = new bootstrap.Modal(document.getElementById('editStoreModal'));
+            const toggleStatusModal = new bootstrap.Modal(document.getElementById('toggleStatusModal'));
+
+            // Biến lưu trữ ID cửa hàng đang được thao tác
+            let currentStoreId;
+            let currentStatus;
+
+            // Xử lý sự kiện click nút chỉnh sửa
+            document.querySelectorAll('.edit-store-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const storeId = this.getAttribute('data-store-id');
+                    loadStoreData(storeId);
+                });
+            });
+
+            // Xử lý sự kiện click nút thay đổi trạng thái
+            document.querySelectorAll('.toggle-status-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    currentStoreId = this.getAttribute('data-store-id');
+                    currentStatus = this.getAttribute('data-current-status');
+                    
+                    const message = currentStatus === 'active' 
+                        ? 'Bạn có chắc chắn muốn khóa cửa hàng này? Khi khóa, cửa hàng sẽ không hiển thị cho người dùng.' 
+                        : 'Bạn có chắc chắn muốn mở khóa cửa hàng này? Khi mở khóa, cửa hàng sẽ hiển thị cho người dùng.';
+                    
+                    document.getElementById('toggleStatusMessage').textContent = message;
+                    toggleStatusModal.show();
+                });
+            });
+             // Xử lý sự kiện xác nhận thay đổi trạng thái
+            document.getElementById('confirmToggleStatus').addEventListener('click', function () {
+                toggleStoreStatus(currentStoreId);
+            });
+
+            // Nút lưu thay đổi
+            document.getElementById('saveStoreChanges').addEventListener('click', function () {
+                updateStore();
+            });
+
+
+            // Hàm thay đổi trạng thái cửa hàng
+            function toggleStoreStatus(storeId) {
+                fetch('/Store/ToggleStoreStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(parseInt(storeId))
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Cập nhật UI
+                        updateStatusUI(storeId, result.newStatus);
+                        
+                        // Đóng modal
+                        toggleStatusModal.hide();
+                        
+                        // Hiển thị thông báo thành công
+                        showToast('Thành công', result.message, true);
+                    } else {
+                        showToast('Lỗi', result.message, false);
+                    }
+                })
+                .catch(error => {
+                    showToast('Lỗi', 'Có lỗi xảy ra khi thay đổi trạng thái cửa hàng', false);
+                    console.error('Error:', error);
+                });
+            }
+
+            // Hàm cập nhật UI sau khi thay đổi trạng thái
+            function updateStatusUI(storeId, newStatus) {
+                // Cập nhật badge
+                const statusBadge = document.getElementById(`status-badge-${storeId}`);
+                const listStatusBadge = document.getElementById(`list-status-badge-${storeId}`);
+                
+                // Cập nhật nút toggle
+                const toggleBtns = document.querySelectorAll(`.toggle-status-btn[data-store-id="${storeId}"]`);
+                
+                // Cập nhật card
+                const storeCard = document.getElementById(`store-card-${storeId}`);
+                
+                // Cập nhật item trong list view
+                const listItem = document.querySelector(`.list-group-item[data-store-id="${storeId}"]`);
+                
+                if (newStatus) {
+                    // Cửa hàng đang hoạt động
+                    if (statusBadge) {
+                        statusBadge.className = 'badge bg-success';
+                        statusBadge.textContent = 'Hoạt động';
+                    }
+                    
+                    if (listStatusBadge) {
+                        listStatusBadge.className = 'badge bg-success ms-2';
+                        listStatusBadge.textContent = 'Hoạt động';
+                    }
+                    
+                    toggleBtns.forEach(btn => {
+                        btn.className = 'btn btn-sm btn-outline-danger toggle-status-btn';
+                        btn.setAttribute('data-current-status', 'active');
+                        btn.setAttribute('title', 'Khóa cửa hàng');
+                        
+                        const textSpan = document.getElementById(`toggle-text-${storeId}`);
+                        if (textSpan) {
+                            textSpan.textContent = 'Khóa';
+                        }
+                        
+                        // Thay đổi icon
+                        const icon = btn.querySelector('i');
+                        if (icon) {
+                            icon.className = 'fas fa-lock';
+                        }
+                    });
+                    
+                    if (storeCard) {
+                        storeCard.classList.remove('border-danger');
+                    }
+                    
+                    if (listItem) {
+                        listItem.classList.remove('bg-light-danger');
+                    }
+                } else {
+                    // Cửa hàng đã bị khóa
+                    if (statusBadge) {
+                        statusBadge.className = 'badge bg-danger';
+                        statusBadge.textContent = 'Đã khóa';
+                    }
+                    
+                    if (listStatusBadge) {
+                        listStatusBadge.className = 'badge bg-danger ms-2';
+                        listStatusBadge.textContent = 'Đã khóa';
+                    }
+                    
+                    toggleBtns.forEach(btn => {
+                        btn.className = 'btn btn-sm btn-outline-success toggle-status-btn';
+                        btn.setAttribute('data-current-status', 'locked');
+                        btn.setAttribute('title', 'Mở khóa cửa hàng');
+                        
+                        const textSpan = document.getElementById(`toggle-text-${storeId}`);
+                        if (textSpan) {
+                            textSpan.textContent = 'Mở khóa';
+                        }
+                        
+                        // Thay đổi icon
+                        const icon = btn.querySelector('i');
+                        if (icon) {
+                            icon.className = 'fas fa-lock-open';
+                        }
+                    });
+                    
+                    if (storeCard) {
+                        storeCard.classList.add('border-danger');
+                    }
+                    
+                    if (listItem) {
+                        listItem.classList.add('bg-light-danger');
+                    }
+                }
+                
+                // Cập nhật data attribute
+                const storeItems = document.querySelectorAll(`[data-store-id="${storeId}"]`);
+                storeItems.forEach(item => {
+                    item.setAttribute('data-store-status', newStatus ? 'active' : 'locked');
+                });
+            }
+
+            // Hàm tải dữ liệu cửa hàng
+            function loadStoreData(storeId) {
+                fetch(`/Store/GetStoreData/${storeId}`,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Không thể tải dữ liệu cửa hàng');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('editStoreId').value = data.id;
+                        document.getElementById('editStoreName').value = data.tenCuaHang;
+                        document.getElementById('editStoreDescription').value = data.moTa;
+
+                        // Hiển thị modal
+                        editModal.show();
+                    })
+                    .catch(error => {
+                        showToast('Lỗi', error.message, false);
+                    });
+            }
+
+            // Hàm cập nhật cửa hàng
+            function updateStore() {
+                const storeId = document.getElementById('editStoreId').value;
+                const storeName = document.getElementById('editStoreName').value;
+                const storeDescription = document.getElementById('editStoreDescription').value;
+
+                // Reset feedback
+                document.getElementById('editStoreName').classList.remove('is-invalid');
+                document.getElementById('editStoreDescription').classList.remove('is-invalid');
+
+                // Tạo dữ liệu để gửi
+                const storeData = {
+                    Ten_Cua_Hang: storeName,
+                    Mo_Ta: storeDescription
+                };
+
+                // Gửi request PATCH
+                fetch(`/Store/Edit/${storeId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(storeData)
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // Cập nhật UI
+                            updateUI(storeId, storeName, storeDescription);
+
+                            // Đóng modal
+                            editModal.hide();
+
+                            // Hiển thị thông báo thành công
+                            showToast('Thành công', result.message, true);
+                        } else {
+                            // Hiển thị lỗi
+                            if (result.errors && result.errors.length > 0) {
+                                // Hiển thị lỗi validation
+                                result.errors.forEach(error => {
+                                    if (error.includes("Ten_Cua_Hang")) {
+                                        document.getElementById('editStoreName').classList.add('is-invalid');
+                                        document.getElementById('editStoreNameFeedback').textContent = error;
+                                    }
+                                    if (error.includes("Mo_Ta")) {
+                                        document.getElementById('editStoreDescription').classList.add('is-invalid');
+                                        document.getElementById('editStoreDescriptionFeedback').textContent = error;
+                                    }
+                                });
+                            }
+
+                            showToast('Lỗi', result.message, false);
+                        }
+                    })
+                    .catch(error => {
+                        showToast('Lỗi', 'Có lỗi xảy ra khi cập nhật cửa hàng', false);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Hàm cập nhật UI sau khi chỉnh sửa thành công
+            function updateUI(storeId, storeName, storeDescription) {
+                // Cập nhật thông tin trong card view
+                const storeCard = document.querySelector(`#store-card-${storeId} h5`);
+                if (storeCard) {
+                    storeCard.textContent = storeName;
+                }
+
+                const storeDesc = document.getElementById(`store-desc-${storeId}`);
+                if (storeDesc) {
+                    if (storeDescription && storeDescription.length > 100) {
+                        storeDesc.innerHTML = `<span title="${storeDescription}">${storeDescription.substring(0, 100)}...</span>`;
+                    } else {
+                        storeDesc.textContent = storeDescription || "Không có mô tả";
+                    }
+                }
+
+                // Cập nhật thông tin trong list view
+                const storeListName = document.getElementById(`store-list-name-${storeId}`);
+                if (storeListName) {
+                    storeListName.textContent = storeName;
+                }
+
+                const storeListDesc = document.getElementById(`store-list-desc-${storeId}`);
+                if (storeListDesc) {
+                    storeListDesc.textContent = storeDescription || "Không có mô tả";
+                }
+
+                // Cập nhật data attribute cho sorting
+                const storeItems = document.querySelectorAll(`[data-store-id="${storeId}"]`);
+                storeItems.forEach(item => {
+                    item.setAttribute('data-store-name', storeName);
+                });
+            }
+
+            // Hàm hiển thị thông báo
+            function showToast(title, message, isSuccess) {
+                toastTitle.textContent = title;
+                toastTitle.className = isSuccess ? 'me-auto text-success' : 'me-auto text-danger';
+                toastMessage.textContent = message;
+                toast.show();
+            }
+        });
+    </script>
 }

@@ -25,5 +25,6 @@ namespace ThuongMaiDienTu.Models
 
         [DataType(DataType.DateTime)]
         public DateTime Ngay_Tao { get; set; } = DateTime.Now;
+        public bool Trang_Thai { get; set; } = true;
     }
 }
