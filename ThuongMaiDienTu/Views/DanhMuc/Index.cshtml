@@ -1,25 +1,13 @@
 ﻿@model IEnumerable<ThuongMaiDienTu.Models.DanhMuc>
 
 @{
-    ViewData["Title"] = "Danh mục sản phẩm";
+    ViewData["Title"] = "Quản lý danh mục";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container-fluid py-4">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2 class="fw-bold text-primary mb-1">
-                <i class="bi bi-folder2-open me-2"></i>Quản lý danh mục sản phẩm
-            </h2>
-        </div>
-        <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end">
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>Thêm danh mục mới
-            </a>
-        </div>
-    </div>
+    @Html.AntiForgeryToken()
 
-    <!-- Alert Section -->
     @if (TempData["StatusMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -28,84 +16,166 @@
         </div>
     }
 
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+            <h5 class="card-title mb-0"><i class="bi bi-folder2-open me-2"></i>Danh Mục Sản Phẩm</h5>
+            <div class="row mb-0">
+                <div class="text-md-end d-flex align-items-center justify-content-md-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#addCategoryModal">
+                        <i class="bi bi-plus-circle me-1"></i>Thêm danh mục mới
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <!-- Main Table -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover mb-0" id="categoriesTable">
+                <table class="table table-hover" id="categoriesTable">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col" class="ps-4">ID</th>
+                            <th class="ps-4" scope="col">ID</th>
                             <th scope="col">Tên danh mục</th>
                             <th scope="col">Trạng thái</th>
-                            <th scope="col" class="text-end pe-4">Thao tác</th>
+                            <th class="text-end pe-4" scope="col">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
-                                <td class="ps-4">
-                                    <span class="badge bg-secondary">@item.Id</span>
-                                </td>
-                                <td class="fw-medium">
-                                    <i class="bi bi-folder text-warning me-2"></i>
-                                    @item.Ten_Danh_Muc
-                                </td>
-                                <td>
-                                    @if (item.Trang_Thai == true)
+                            <tr id="category-row-@item.Id">
+                            <td class="ps-4">
+                                <span class="badge bg-secondary">@item.Id</span>
+                            </td>
+                            <td class="fw-medium category-name">
+                                <i class="bi bi-folder text-warning me-2"></i>
+                                @item.Ten_Danh_Muc
+                            </td>
+                            <td class="category-status">
+                                @if (item.Trang_Thai)
+                                {
+                                    <span class="badge rounded-pill bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Đang hoạt động
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge rounded-pill bg-danger">
+                                        <i class="bi bi-x-circle me-1"></i>Đã khóa
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <button type="button" 
+                                            onclick="openEditModal(@item.Id, '@item.Ten_Danh_Muc', @item.Trang_Thai.ToString().ToLower())" 
+                                            class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil-square me-1"></i>Sửa
+                                    </button>
+                                    
+                                    @if (item.Trang_Thai)
                                     {
-                                        <span class="badge rounded-pill bg-success">
-                                            <i class="bi bi-check-circle me-1"></i>Đang hoạt động
-                                        </span>
+                                        <button type="button" 
+                                                onclick="confirmToggleStatus(@item.Id, '@item.Ten_Danh_Muc', true)"
+                                                class="btn btn-sm btn-outline-danger toggle-status-btn">
+                                            <i class="bi bi-lock-fill me-1"></i>Khóa
+                                        </button>
                                     }
                                     else
                                     {
-                                        <span class="badge rounded-pill bg-danger">
-                                            <i class="bi bi-x-circle me-1"></i>Ngừng hoạt động
-                                        </span>
-                                    }
-                                </td>
-                                <td class="text-end pe-4">
-                                    <div class="btn-group">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-pencil-square me-1"></i>Sửa
-                                        </a>
                                         <button type="button" 
-                                                onclick="confirmToggleStatus(@item.Id, '@item.Ten_Danh_Muc', @(item.Trang_Thai.ToString().ToLower()))"
-                                                class="btn btn-sm @(item.Trang_Thai ? "btn-outline-danger" : "btn-outline-success")">
-                                            <i class="bi @(item.Trang_Thai ? "bi-lock-fill" : "bi-unlock-fill") me-1"></i>
-                                            @(item.Trang_Thai ? "Khóa" : "Mở khóa")
+                                                onclick="confirmToggleStatus(@item.Id, '@item.Ten_Danh_Muc', false)"
+                                                class="btn btn-sm btn-outline-success toggle-status-btn">
+                                            <i class="bi bi-unlock-fill me-1"></i>Mở khóa
                                         </button>
-                                    </div>
-                                </td>
-                            </tr>
+                                    }
+                                    
+                                </div>
+                            </td>
+                        </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white py-3">
+        <div class="card-footer bg-light">
             <div class="row">
                 <div class="col-md-6">
-                    <span>Hiển thị <strong>@Model.Count()</strong> danh mục</span>
+                    <span class="text-muted">Hiển thị <strong>@Model.Count()</strong> danh mục</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal xác nhận -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+<!-- Modal Thêm Danh Mục -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Xác nhận thay đổi trạng thái</h5>
+                <h5 class="modal-title" id="addCategoryModalLabel">Thêm danh mục mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" id="categoryName" name="Ten_Danh_Muc" required>
+                        <div class="invalid-feedback" id="categoryNameError"></div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="categoryStatus" name="Trang_Thai" checked>
+                        <label class="form-check-label" for="categoryStatus">Hoạt động</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="submitCategory">Thêm mới</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Chỉnh Sửa Danh Mục -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Chỉnh sửa danh mục</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCategoryForm">
+                    <input type="hidden" id="editCategoryId" name="Id">
+                    <div class="mb-3">
+                        <label for="editCategoryName" class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" id="editCategoryName" name="Ten_Danh_Muc" required>
+                        <div class="invalid-feedback" id="editCategoryNameError"></div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="editCategoryStatus" name="Trang_Thai">
+                        <label class="form-check-label" for="editCategoryStatus">Hoạt động</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="submitEditCategory">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Xác nhận -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Xác nhận thao tác</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="confirmModalBody">
+                <!-- Nội dung sẽ được điền bằng JavaScript -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -115,39 +185,462 @@
     </div>
 </div>
 
+<!-- Toast thông báo -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="categoryToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header" id="toastHeader">
+            <i class="bi bi-check-circle me-2" id="toastIcon"></i>
+            <strong class="me-auto" id="toastTitle">Thông báo</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        // Tìm kiếm danh mục
-        $(document).ready(function() {
-            $("#searchInput").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $("#categoriesTable tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        function openEditModal(id, name, status) {
+            // Cập nhật form
+            document.getElementById('editCategoryId').value = id;
+            document.getElementById('editCategoryName').value = name;
+            document.getElementById('editCategoryStatus').checked = status;
+
+            // Mở modal
+            var editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+            editModal.show();
+        }
+
+        // Sự kiện submit form chỉnh sửa danh mục
+        document.addEventListener('DOMContentLoaded', function () {
+            const editCategoryForm = document.getElementById('editCategoryForm');
+            const submitEditBtn = document.getElementById('submitEditCategory');
+            const editCategoryModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+            
+            
+
+            if (submitEditBtn) {
+                submitEditBtn.addEventListener('click', function () {
+
+                    console.log(editCategoryModal);
+                    // Kiểm tra form hợp lệ
+                    const categoryName = document.getElementById('editCategoryName').value.trim();
+                    if (!categoryName) {
+                        document.getElementById('editCategoryName').classList.add('is-invalid');
+                        document.getElementById('editCategoryNameError').textContent = 'Vui lòng nhập tên danh mục';
+                        return;
+                    }
+
+                    const categoryId = document.getElementById('editCategoryId').value;
+
+                    // Tạo đối tượng danh mục
+                    const categoryData = {
+                        Id: parseInt(categoryId),
+                        Ten_Danh_Muc: categoryName,
+                        Trang_Thai: document.getElementById('editCategoryStatus').checked
+                    };
+
+                    // Lấy token CSRF từ form
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    // Gửi request Ajax
+                    fetch('@Url.Action("EditAjax", "DanhMuc")', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify(categoryData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Dời focus ra ngoài modal trước khi đóng để tránh cảnh báo  liên quan đến vấn đề khả năng truy cập (accessibility) trong Bootstrap Modal.
+                            document.body.focus();
+                            var myModal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
+                            if (myModal) {
+                                myModal.hide();
+                            }
+                            if (data.success) {
+                                console.log(data.data);
+                                // Đóng modal
+
+                                // Hiển thị thông báo thành công
+                                showToast('Thành công', data.message, 'success');
+
+                                // Cập nhật dòng trong bảng
+                                updateCategoryRow(data.data);
+                            } else {
+                                // Hiển thị thông báo lỗi
+                                showToast('Lỗi', data.message, 'danger');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('Lỗi', 'Đã xảy ra lỗi khi xử lý yêu cầu', 'danger');
+                        });
+
                 });
+            }
+
+            // Xóa thông báo lỗi khi nhập lại trong form sửa
+            const editCategoryName = document.getElementById('editCategoryName');
+            if (editCategoryName) {
+                editCategoryName.addEventListener('input', function () {
+                    this.classList.remove('is-invalid');
+                });
+            }
+        });
+
+        // Hàm xác nhận xóa danh mục
+        function confirmDelete(id, name) {
+            const content = `
+                    <div class="text-center mb-3">
+                        <i class="bi bi-trash-fill text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <p>Bạn có chắc muốn <strong class="text-danger">xóa</strong> danh mục sau?</p>
+                    <div class="alert alert-secondary">
+                        <strong>${name}</strong>
+                    </div>
+                    <p class="text-danger"><strong>Lưu ý:</strong> Hành động này không thể hoàn tác!</p>
+                `;
+
+            // Cập nhật nội dung modal
+            document.getElementById('confirmModalBody').innerHTML = content;
+            document.getElementById('confirmModalLabel').textContent = 'Xác nhận xóa danh mục';
+
+            // Cập nhật nút xác nhận
+            const confirmBtn = document.getElementById('confirmActionBtn');
+            confirmBtn.textContent = 'Xóa';
+            confirmBtn.className = 'btn btn-danger';
+            confirmBtn.onclick = function () {
+                deleteCategory(id);
+                var modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+                modal.hide();
+            };
+
+            // Hiển thị modal
+            var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+
+        // Hàm xóa danh mục bằng Ajax
+        function deleteCategory(id) {
+            // Lấy token CSRF từ form
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // Gửi request Ajax
+            fetch(`@Url.Action("DeleteAjax", "DanhMuc")?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'RequestVerificationToken': token
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hiển thị thông báo thành công
+                        showToast('Thành công', data.message, 'success');
+
+                        // Xóa dòng khỏi bảng
+                        removeCategoryRow(id);
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        showToast('Lỗi', data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Lỗi', 'Đã xảy ra lỗi khi xử lý yêu cầu', 'danger');
+                });
+        }
+
+        // Hàm thay đổi trạng thái danh mục bằng Ajax
+        function toggleStatusAjax(id) {
+            // Lấy token CSRF từ form
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // Gửi request Ajax
+            fetch(`@Url.Action("ToggleStatusAjax", "DanhMuc")?id=${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'RequestVerificationToken': token
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Đóng modal xác nhận nếu đang mở
+                        var confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+                        if (confirmModal) {
+                            confirmModal.hide();
+                        }
+
+                        // Hiển thị thông báo thành công
+                        showToast('Thành công', data.message, 'success');
+
+                        // Cập nhật dòng trong bảng
+                        updateCategoryRow(data.data);
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        showToast('Lỗi', data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Lỗi', 'Đã xảy ra lỗi khi xử lý yêu cầu', 'danger');
+                });
+        }
+
+        // Hàm cập nhật dòng danh mục trong bảng
+        function updateCategoryRow(category) {
+            const row = document.querySelector(`#category-row-${category.id}`);
+            if (!row) return;
+
+            // Cập nhật tên danh mục
+            const nameCell = row.querySelector('.category-name');
+            if (nameCell) {
+                nameCell.textContent = category.ten_Danh_Muc;
+            }
+
+            // Cập nhật trạng thái
+            const statusCell = row.querySelector('.category-status');
+            if (statusCell) {
+                statusCell.innerHTML = category.trang_Thai ?
+                    '<span class="badge rounded-pill bg-success"><i class="bi bi-check-circle me-1"></i>Đang hoạt động</span>' :
+                    '<span class="badge rounded-pill bg-danger"><i class="bi bi-x-circle me-1"></i>Đã khóa</span>';
+            }
+
+            // Cập nhật nút thay đổi trạng thái
+            const toggleBtn = row.querySelector('.toggle-status-btn');
+            if (toggleBtn) {
+                toggleBtn.innerHTML = category.trang_Thai ?
+                    '<i class="bi bi-lock-fill me-1"></i>Khóa' :
+                    '<i class="bi bi-unlock-fill me-1"></i>Mở khóa';
+
+                toggleBtn.className = category.trang_Thai ?
+                    'btn btn-sm btn-outline-danger toggle-status-btn' :
+                    'btn btn-sm btn-outline-success toggle-status-btn';
+
+                toggleBtn.onclick = function () {
+                    confirmToggleStatus(category.id, category.ten_Danh_Muc, category.trang_Thai);
+                };
+            }
+        }
+
+        // Hàm xóa dòng danh mục khỏi bảng
+        function removeCategoryRow(id) {
+            const row = document.querySelector(`#category-row-${id}`);
+            if (row) {
+                row.remove();
+
+                // Cập nhật số lượng danh mục hiển thị
+                const countDisplay = document.querySelector('.card-footer .col-md-6 span strong');
+                if (countDisplay) {
+                    countDisplay.textContent = parseInt(countDisplay.textContent) - 1;
+                }
+            }
+        }
+
+        // Hiển thị toast thông báo
+        function showToast(title, message, type) {
+            const toastHeader = document.getElementById('toastHeader');
+            toastHeader.className = 'toast-header';
+            toastHeader.classList.add(`bg-${type}`, 'text-white');
+
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = message;
+
+            const categoryToast = new bootstrap.Toast(document.getElementById('categoryToast'));
+            categoryToast.show();
+        }
+
+        // Hàm thay đổi xác nhận trạng thái với modal
+        function confirmToggleStatus(id, name, isActive) {
+            const action = isActive ? 'khóa' : 'mở khóa';
+            const status = isActive ? 'đang hoạt động' : 'đã bị khóa';
+            const colorClass = isActive ? 'text-danger' : 'text-success';
+
+            const content = `
+                    <div class="text-center mb-3">
+                        <i class="bi ${isActive ? 'bi-lock-fill' : 'bi-unlock-fill'} ${colorClass}" style="font-size: 3rem;"></i>
+                    </div>
+                    <p>Bạn có chắc muốn <strong class="${colorClass}">${action}</strong> danh mục sau?</p>
+                    <div class="alert alert-secondary">
+                        <strong>${name}</strong><br>
+                        <small>Trạng thái hiện tại: ${status}</small>
+                    </div>
+                `;
+
+            // Cập nhật nội dung modal
+            document.getElementById('confirmModalBody').innerHTML = content;
+            document.getElementById('confirmModalLabel').textContent = `Xác nhận ${action} danh mục`;
+
+            // Cập nhật nút xác nhận
+            const confirmBtn = document.getElementById('confirmActionBtn');
+            confirmBtn.textContent = 'Xác nhận';
+            confirmBtn.className = `btn btn-${isActive ? 'danger' : 'success'}`;
+            confirmBtn.onclick = function () {
+                toggleStatusAjax(id);
+            };
+
+            // Hiển thị modal
+            var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
+        }
+        // Tìm kiếm danh mục
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function () {
+                    const value = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('#categoriesTable tbody tr');
+
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.indexOf(value) > -1 ? '' : 'none';
+                    });
+                });
+            }
+
+            // Xử lý form thêm danh mục
+            const addCategoryForm = document.getElementById('addCategoryForm');
+            const submitCategoryBtn = document.getElementById('submitCategory');
+            const categoryModal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+            const categoryToast = new bootstrap.Toast(document.getElementById('categoryToast'));
+
+            submitCategoryBtn.addEventListener('click', function () {
+                // Kiểm tra form hợp lệ
+                const categoryName = document.getElementById('categoryName').value.trim();
+                if (!categoryName) {
+                    document.getElementById('categoryName').classList.add('is-invalid');
+                    document.getElementById('categoryNameError').textContent = 'Vui lòng nhập tên danh mục';
+                    return;
+                }
+
+                // Tạo đối tượng danh mục
+                const categoryData = {
+                    Ten_Danh_Muc: categoryName,
+                    Trang_Thai: document.getElementById('categoryStatus').checked
+                };
+
+                // Lấy token CSRF từ form
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // Gửi request Ajax
+                fetch('@Url.Action("CreateAjax", "DanhMuc")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(categoryData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Đóng modal
+                            categoryModal.hide();
+
+                            // Reset form
+                            addCategoryForm.reset();
+
+                            // Hiển thị thông báo thành công
+                            document.getElementById('toastHeader').classList.add('bg-success', 'text-white');
+                            document.getElementById('toastHeader').classList.remove('bg-danger');
+                            document.getElementById('toastTitle').textContent = 'Thành công';
+                            document.getElementById('toastMessage').textContent = data.message;
+                            categoryToast.show();
+
+                            // Thêm dòng mới vào bảng
+                            addNewCategoryRow(data.data);
+                        } else {
+                            // Hiển thị thông báo lỗi
+                            document.getElementById('toastHeader').classList.add('bg-danger', 'text-white');
+                            document.getElementById('toastHeader').classList.remove('bg-success');
+                            document.getElementById('toastTitle').textContent = 'Lỗi';
+                            document.getElementById('toastMessage').textContent = data.message;
+                            categoryToast.show();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('toastHeader').classList.add('bg-danger', 'text-white');
+                        document.getElementById('toastHeader').classList.remove('bg-success');
+                        document.getElementById('toastTitle').textContent = 'Lỗi';
+                        document.getElementById('toastMessage').textContent = 'Đã xảy ra lỗi khi xử lý yêu cầu';
+                        categoryToast.show();
+                    });
+            });
+
+            // Xóa thông báo lỗi khi nhập lại
+            document.getElementById('categoryName').addEventListener('input', function () {
+                this.classList.remove('is-invalid');
             });
         });
+
+        // Hàm thêm dòng mới vào bảng
+        function addNewCategoryRow(category) {
+            const tbody = document.querySelector('#categoriesTable tbody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                    <td class="ps-4">
+                        <span class="badge bg-secondary">${category.id}</span>
+                    </td>
+                    <td class="fw-medium">
+                        <i class="bi bi-folder text-warning me-2"></i>
+                        ${category.ten_Danh_Muc}
+                    </td>
+                    <td>
+                        <span class="badge rounded-pill bg-success">
+                            <i class="bi bi-check-circle me-1"></i>Đang hoạt động
+                        </span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group">
+                            <a href="/DanhMuc/Edit/${category.id}" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil-square me-1"></i>Sửa
+                            </a>
+                            <button type="button" 
+                                    onclick="confirmToggleStatus(${category.id}, '${category.ten_Danh_Muc}', true)"
+                                    class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-lock-fill me-1"></i>Khóa
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+            tbody.insertBefore(row, tbody.firstChild);
+
+            // Cập nhật số lượng danh mục hiển thị
+            const countDisplay = document.querySelector('.card-footer .col-md-6 span strong');
+            if (countDisplay) {
+                countDisplay.textContent = parseInt(countDisplay.textContent) + 1;
+            }
+        }
 
         // Xác nhận thay đổi trạng thái với modal
         function confirmToggleStatus(id, name, isActive) {
             const action = isActive ? 'khóa' : 'mở khóa';
             const status = isActive ? 'đang hoạt động' : 'đã bị khóa';
             const colorClass = isActive ? 'text-danger' : 'text-success';
-            
+
             const content = `
-                <div class="text-center mb-3">
-                    <i class="bi ${isActive ? 'bi-lock-fill' : 'bi-unlock-fill'} ${colorClass}" style="font-size: 3rem;"></i>
-                </div>
-                <p>Bạn có chắc muốn <strong class="${colorClass}">${action}</strong> danh mục sau?</p>
-                <div class="alert alert-secondary">
-                    <strong>${name}</strong><br>
-                    <small>Trạng thái hiện tại: ${status}</small>
-                </div>
-            `;
-            
+                    <div class="text-center mb-3">
+                        <i class="bi ${isActive ? 'bi-lock-fill' : 'bi-unlock-fill'} ${colorClass}" style="font-size: 3rem;"></i>
+                    </div>
+                    <p>Bạn có chắc muốn <strong class="${colorClass}">${action}</strong> danh mục sau?</p>
+                    <div class="alert alert-secondary">
+                        <strong>${name}</strong><br>
+                        <small>Trạng thái hiện tại: ${status}</small>
+                    </div>
+                `;
+
             // Cập nhật nội dung modal
             document.getElementById('confirmModalBody').innerHTML = content;
             document.getElementById('confirmActionBtn').href = '@Url.Action("ToggleStatus", "DanhMuc")/' + id;
-            
+
             // Hiển thị modal
             var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
             modal.show();
