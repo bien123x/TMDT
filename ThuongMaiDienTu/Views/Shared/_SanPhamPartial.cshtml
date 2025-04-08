@@ -1,56 +1,67 @@
 ﻿@model List<ThuongMaiDienTu.Models.SanPham>
 
-<table class="table table-striped text-center">
-    <thead>
-        <tr>
-            <th>Sản Phẩm</th>
-            <th>Số Lượng</th>
-            <th>Giá Sản Phẩm</th>
-            <th>Ngày Cập nhật</th>
-            <th>Thao Tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info mt-3">
+        <i class="bi bi-info-circle"></i> Không có sản phẩm nào.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var sanPham in Model)
         {
-            <tr id="row-@item.Id">
-                <td class="d-flex align-items-center">
-                    <img src="@item.Hinh_Anh" class="rounded me-2" width="50" height="50" alt="@item.Ten_San_Pham">
-                    <span>@item.Ten_San_Pham</span>
-                </td>
-                <td>@item.So_Luong_Ton</td>
-                <td>
-                    <span class="text-decoration-line-through">@item.Gia_Goc.ToString("N0") VND</span><br>
-                    <strong class="text-danger">@item.Gia_Khuyen_Mai?.ToString("N0") VND</strong>
-                </td>
-                <td>@item.Ngay_Tao.ToString("HH:mm - dd/MM/yyyy")</td>
-                <td>
-                    <a href="/SanPham/Edit/@item.Id" class="btn btn-primary btn-sm">Chỉnh Sửa</a>
-                    <button class="btn btn-danger btn-sm xoaSanPham" data-id="@item.Id">Xóa</button>
-                </td>
-            </tr>
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-img-top position-relative">
+                        @{
+                            string imageUrl = !string.IsNullOrEmpty(sanPham.Hinh_Anh)
+                            ? sanPham.Hinh_Anh
+                            : "/images/default-product-image.jpg";
+                        }
+                        <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })">
+                            <img src="@Url.Content(imageUrl)" class="card-img-top" alt="@sanPham.Ten_San_Pham"
+                                style="height: 180px; object-fit: cover;">
+                        </a>
+
+                        @if (sanPham.Giam_Gia > 0)
+                        {
+                            <div class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded-pill">
+                                Giảm @sanPham.Giam_Gia.Value.ToString("N0") ₫
+                            </div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })"
+                                class="text-decoration-none text-dark">
+                                @sanPham.Ten_San_Pham
+                            </a>
+                        </h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                @if (sanPham.Giam_Gia > 0)
+                                {
+                                    <p class="text-decoration-line-through text-muted mb-0">
+                                        @sanPham.Gia_Goc.ToString("N0") ₫
+                                    </p>
+                                    <p class="fw-bold text-danger mb-0">
+                                        @((sanPham.Gia_Goc - sanPham.Giam_Gia).Value.ToString("N0")) ₫
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="fw-bold mb-0">@sanPham.Gia_Goc.ToString("N0") ₫</p>
+                                }
+                            </div>
+                            <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })"
+                                class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
-<script>
-    document.querySelectorAll(".xoaSanPham").forEach(button => {
-        button.addEventListener("click", function(event) {
-            let productId = this.getAttribute("data-id");  // Lấy ID sản phẩm từ data-id
-
-            if (confirm("Bạn có muốn xoá sản phẩm ID " + productId + " không?")) {
-
-                fetch('@Url.Action("Delete", "SanPham")', {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(productId)
-                })
-                .then(response => response.json())  // Gọi json() đúng cách
-                .then(data => {
-                    alert(data.message);
-                    document.getElementById("row-" + productId).remove();
-                })
-                .catch(error => console.error("Lỗi:", error));
-            }
-        });
-    });
-</script>
+    </div>
+}

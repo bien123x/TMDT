@@ -2,10 +2,45 @@
 
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
+    var isSeller = Context.Session.GetInt32("IsSeller");
+    var userId = Context.Session.GetInt32("UserId");
+    var storeId = Context.Session.GetInt32("StoreId");
+    var currentUrl = Context.Request.Path + Context.Request.QueryString;
+    
 }
-<a href="/SanPham/Create" class="btn btn-primary btn-sm">Thêm</a>
-
+@if (userId.HasValue && isSeller == 1 && storeId.HasValue)
+{
+    <a href="/SanPham/Create" class="btn btn-primary btn-sm">Thêm</a>
+}
 <div class="container mt-4">
-    <h3 class="mb-3">Danh Sách Sản Phẩm</h3>
-    @await Html.PartialAsync("_SanPhamPartial", Model)
+    <div class="row mb-4">
+        <div class="col-12">
+            @if (ViewBag.StoreName != null)
+            {
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h3 class="card-title mb-1">@ViewBag.StoreName</h3>
+                                @if (!string.IsNullOrEmpty(ViewBag.StoreDescription))
+                                {
+                                    <p class="text-muted mb-0">@ViewBag.StoreDescription</p>
+                                }
+                            </div>
+                            <a href="@Url.Action("ProfileStore", "Store", new { id = ViewBag.StoreId })"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-shop"></i> Xem cửa hàng
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <h3 class="mb-3">Danh Sách Sản Phẩm</h3>
+            }
+        </div>
+    </div>
+
+@await Html.PartialAsync("_SanPhamPartial", Model)
 </div>

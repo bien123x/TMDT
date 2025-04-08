@@ -1,4 +1,4 @@
-﻿@model ThuongMaiDienTu.Models.CuaHang
+@model ThuongMaiDienTu.Models.CuaHang
 
 @{
     ViewData["Title"] = "Thông Tin Cửa Hàng";
@@ -7,7 +7,6 @@
     // Lấy thông tin vai trò người dùng từ session
     var userRoleId = Context.Session.GetInt32("UserRoleId");
     var userId = Context.Session.GetInt32("UserId");
-    var isSeller = Context.Session.GetInt32("IsSeller") == 1;
 }
 
 <div class="container mt-4">
@@ -86,16 +85,9 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <a href="@Url.Action("Index", "SanPham", new { storeId = Model.Id })"
-                            class="btn btn-primary me-2">
+                        <a href="@Url.Action("Index", "SanPham", new { storeId = Model.Id })" class="btn btn-primary">
                             <i class="bi bi-shop"></i> Xem sản phẩm
                         </a>
-                        @if (userId == Model.Id_Nguoi_Ban)
-                        {
-                            <a href="@Url.Action("Edit", "Store")" class="btn btn-outline-primary">
-                                <i class="bi bi-pencil-square"></i> Chỉnh sửa thông tin
-                            </a>
-                        }
                     </div>
                 </div>
             </div>

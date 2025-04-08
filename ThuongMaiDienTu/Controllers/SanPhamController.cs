@@ -17,12 +17,42 @@ namespace ThuongMaiDienTu.Controllers
         }
     
         // GET: SanPhamController
-        public IActionResult Index()
+        public IActionResult Index(int? storeId)
         {
+            if (storeId.HasValue)
+            {
+                // Kiểm tra xem cửa hàng có tồn tại không
+                var store = _context.CuaHangs.FirstOrDefault(ch => ch.Id == storeId.Value);
+                if (store == null)
+                {
+                    return NotFound(); // Trả về 404 nếu không tìm thấy cửa hàng
+                }
+
+                // Lấy thông tin cửa hàng và đổ vào ViewBag để hiển thị trên view
+                ViewBag.StoreName = store.Ten_Cua_Hang;
+                ViewBag.StoreId = store.Id;
+                ViewBag.StoreDescription = store.Mo_Ta;
+
+                // Lấy danh sách sản phẩm của cửa hàng
+                var sanPhamCuaHang = _sanPhamRepository.GetAll()
+                    .Where(sp => sp.Id_Cua_Hang == storeId.Value)
+                    .ToList();
+
+                return View(sanPhamCuaHang);
+            }
             var isSeller = HttpContext.Session.GetInt32("IsSeller");
             var userId = HttpContext.Session.GetInt32("UserId");
             var cuaHangId = HttpContext.Session.GetInt32("StoreId");
-            if (isSeller == 1) {
+            if (isSeller == 1 && cuaHangId.HasValue) {
+                // Lấy thông tin cửa hàng của người bán để hiển thị
+                var store = _context.CuaHangs.FirstOrDefault(ch => ch.Id == cuaHangId.Value);
+                if (store != null)
+                {
+                    ViewBag.StoreName = store.Ten_Cua_Hang;
+                    ViewBag.StoreId = store.Id;
+                    ViewBag.StoreDescription = store.Mo_Ta;
+                }
+                
                 var sanPham = _sanPhamRepository.GetAll().Where(sp => sp.Id_Cua_Hang == cuaHangId).ToList();
                 return View(sanPham);
             }
