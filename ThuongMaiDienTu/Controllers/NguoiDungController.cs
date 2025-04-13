@@ -23,19 +23,41 @@ public class NguoiDungController : Controller
         _vaiTroRepository = vaiTroRepository;
         _context = context;
     }
+    
 
     // Hiển thị danh sách người dùng
-    public IActionResult Index()
+    public IActionResult Index(int page = 1, int pageSize = 10)
     {
         // Kiểm tra người dùng đăng nhập có quyền admin
         var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
-        if (isAdmin == null)
+        if (isAdmin != 1)
         {
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("NotAllow", "Home");
         }
 
         var nguoiDungs = _nguoiDungRepository.GetAllWithDetails();
-        return View(nguoiDungs);
+        
+
+        // Thông tin phân trang
+        int totalItems = nguoiDungs.Count();
+        int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+        // Đảm bảo page nằm trong khoảng hợp lệ
+        page = Math.Max(1, Math.Min(page, totalPages));
+
+        // Thực hiện phân trang
+        var pagedNguoiDungs = nguoiDungs
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        // Truyền thông tin phân trang cho view
+        ViewBag.CurrentPage = page;
+        ViewBag.TotalPages = totalPages;
+        ViewBag.PageSize = pageSize;
+        ViewBag.TotalItems = totalItems;
+      
+        return View(pagedNguoiDungs);
     }
 
     // Xem chi tiết người dùng
@@ -95,7 +117,6 @@ public class NguoiDungController : Controller
         // Kiểm tra tính hợp lệ của dữ liệu 
         ValidationNguoiDungCreate(viewModel); 
 
-        // Nếu có lỗi hoặc ModelState không hợp lệ, hiển thị lại form với thông báo lỗi
         if (!ModelState.IsValid)
         {
             var errorMessages = ModelState.Values
@@ -116,7 +137,8 @@ public class NguoiDungController : Controller
             {
                 Ho_Ten = viewModel.Ho_Ten.Trim(),
                 Email = viewModel.Email.Trim(),
-                Mat_Khau = viewModel.Mat_Khau, 
+                // Mã hóa mật khẩu trước khi lưu
+                Mat_Khau = BCrypt.Net.BCrypt.HashPassword(viewModel.Mat_Khau),
                 So_Dien_Thoai = viewModel.So_Dien_Thoai?.Trim(),
                 Vai_Tro_Id = viewModel.Vai_Tro_Id,
                 Ngay_Tao = DateTime.Now,
@@ -304,10 +326,12 @@ public class NguoiDungController : Controller
         {
             return NotFound();
         }
+        
         // Luôn khởi tạo danh sách vai trò
         viewModel.VaiTroList = LoadVaiTroList(viewModel.Vai_Tro_Id);
         // Áp dụng xác thực
         ValidateNguoiDungEdit(viewModel, id);
+        
         if (ModelState.IsValid)
         {
             try
@@ -317,16 +341,17 @@ public class NguoiDungController : Controller
                 {
                     return NotFound();
                 }
+                
                 nguoiDung.Ho_Ten = viewModel.Ho_Ten;
                 nguoiDung.Email = viewModel.Email;
                 nguoiDung.So_Dien_Thoai = viewModel.So_Dien_Thoai;
                 nguoiDung.Vai_Tro_Id = viewModel.Vai_Tro_Id;
                 nguoiDung.Trang_Thai = viewModel.Trang_Thai;
 
-                // Nếu nhập mật khẩu mới thì cập nhật
+                // Nếu nhập mật khẩu mới thì mã hóa và cập nhật
                 if (!string.IsNullOrEmpty(viewModel.Mat_Khau))
                 {
-                    nguoiDung.Mat_Khau = viewModel.Mat_Khau; // Trong thực tế nên mã hóa mật khẩu
+                    nguoiDung.Mat_Khau = BCrypt.Net.BCrypt.HashPassword(viewModel.Mat_Khau);
                 }
 
                 _nguoiDungRepository.Update(nguoiDung);

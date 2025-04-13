@@ -29,7 +29,6 @@
 
         <div class="text-center mt-3">
             <a href="@Url.Action("EditProfile", "Account")" class="btn btn-primary">Chỉnh sửa</a>
-            <a href="@Url.Action("RePassword", "Account")" class="btn btn-danger">Đổi mật khẩu</a>
             @if (ViewBag.NoStore != null) {
                 <a href="@Url.Action("Create", "Store")" class="btn btn-danger">Tạo cửa hàng</a>
             }

@@ -5,7 +5,6 @@
     ViewData["Title"] = "Đăng Ký";
 }
 
-
 <div class="sidenav">
     <div class="login-main-text">
         <h2>Trang Đăng Ký</h2>
@@ -16,39 +15,34 @@
 <div class="main">
     <div class="col-md-6 col-sm-12">
         <div class="login-form" id=form-Dk>
-            <form id="registerForm">
+            <form id="registerForm" method="post" onsubmit="return validateForm()">
                 <div class="form-group">
                     <label asp-for="Ho_Ten">Họ và Tên</label>
-                    <input asp-for="Ho_Ten" type="text" class="form-control" placeholder="Email/Số Điện Thoại"
-                        name="username">
+                    <input asp-for="Ho_Ten" type="text" class="form-control" placeholder="Họ và tên" required>
                     <span asp-validation-for="Ho_Ten" class="text-danger"></span>
                 </div>
                 <div class="form-group my-2">
                     <label asp-for="Email">Email</label>
-                    <input asp-for="Email" class="form-control" placeholder="Email" id="password"
-                        name="password">
+                    <input asp-for="Email" class="form-control" placeholder="Email" required>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group my-2">
                     <label asp-for="Mat_Khau">Mật Khẩu</label>
-                    <input asp-for="Mat_Khau" type="password" class="form-control" placeholder="Mật khẩu" id="password"
-                        name="password">
+                    <input asp-for="Mat_Khau" type="password" class="form-control" placeholder="Mật khẩu" required>
                     <span asp-validation-for="Mat_Khau" class="text-danger"></span>
                 </div>
                 <div class="form-group my-2">
-                    <label asp-for="Mat_Khau">Mật khẩu</label>
-                    <input asp-for="Mat_Khau" type="password" class="form-control" placeholder="Nhập lại mật khẩu" id="password"
-                        name="password">
-                    <span asp-validation-for="Mat_Khau" class="text-danger"></span>
+                    <label>Nhập Lại Mật khẩu</label>
+                    <input type="password" class="form-control" placeholder="Nhập lại mật khẩu" id="Re_Mat_Khau" required>
+                    <span id="passwordMatchError" class="text-danger"></span>
                 </div>
                 <div class="form-group my-2">
                     <label asp-for="So_Dien_Thoai">Số Điện Thoại</label>
-                    <input asp-for="So_Dien_Thoai"  class="form-control" placeholder="Số Điện Thoại"
-                        name="password">
+                    <input asp-for="So_Dien_Thoai" class="form-control" placeholder="Số Điện Thoại" required>
                     <span asp-validation-for="So_Dien_Thoai" class="text-danger"></span>
                 </div>
                 <div class="form-group my-2">
-                    <label asp-for="So_Dien_Thoai">Vai Trò</label>
+                    <label>Vai Trò</label>
                     <select asp-for="Vai_Tro_Id" class="form-control">
                         <option value="1">Người Mua</option>
                         <option value="2">Người Bán</option>
@@ -58,43 +52,23 @@
                 <button type="submit" class="btn btn-black mt-2">Đăng Ký</button>
                 <a class="btn btn-outline-black mt-2" href="@Url.Action("Login", "Account")">Đăng Nhập</a>
             </form>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+            }
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById("registerForm").addEventListener("submit", function(event){
-        event.preventDefault();
-
-        let formData = {
-            Ho_Ten: document.getElementById("Ho_Ten").value,
-            Email: document.getElementById("Email").value,
-            Mat_Khau: document.getElementById("Mat_Khau").value,
-            So_Dien_Thoai: document.getElementById("So_Dien_Thoai").value,
-            Vai_Tro_Id: document.getElementById("Vai_Tro_Id").value
-        };
-
-        fetch('@Url.Action("Register", "Account")', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success){
-                if (data.seller) {
-                    window.location.href = "@Url.Action("Create", "Store")";
-                }
-                else{
-                    alert("Đăng kí thành công!");
-                    window.location.href = "@Url.Action("Login", "Account")";
-                }
-            } else {
-                alert("Lỗi: " + data.message);
-            }
-        })
-        .catch(error => console.error("Lỗi:", error));
-    });
+    function validateForm() {
+        const password = document.getElementById("Mat_Khau").value;
+        const rePassword = document.getElementById("Re_Mat_Khau").value;
+        
+        if (password !== rePassword) {
+            document.getElementById("passwordMatchError").textContent = "Mật khẩu không khớp!";
+            return false;
+        }
+        return true;
+    }
 </script>

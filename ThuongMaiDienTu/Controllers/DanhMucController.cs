@@ -20,6 +20,104 @@ namespace ThuongMaiDienTu.Controllers
             return View(danhMucs);
         }
 
+        // Thêm phương thức CreateAjax
+        [HttpPost]
+        public async Task<IActionResult> CreateAjax([FromBody] DanhMuc danhMuc)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ", errors });
+            }
+
+            try
+            {
+                // Đặt trạng thái mặc định là true (hoạt động)
+                danhMuc.Trang_Thai = true;
+
+                // Thêm danh mục mới
+                await _danhMucRepository.AddDanhMucAsync(danhMuc);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Thêm danh mục thành công!",
+                    data = new
+                    {
+                        id = danhMuc.Id,
+                        ten_Danh_Muc = danhMuc.Ten_Danh_Muc,
+                        trang_Thai = danhMuc.Trang_Thai,
+                        mo_ta = danhMuc.Mo_Ta
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Lỗi khi thêm danh mục: " + ex.Message
+                });
+            }
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> EditAjax([FromBody] DanhMuc danhMuc)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ", errors });
+            }
+
+            try
+            {
+                var existingDanhMuc = await _danhMucRepository.GetDanhMucByIdAsync(danhMuc.Id);
+                if (existingDanhMuc == null)
+                {
+                    return NotFound(new { success = false, message = "Không tìm thấy danh mục" });
+                }
+
+                // Cập nhật thông tin
+                existingDanhMuc.Ten_Danh_Muc = danhMuc.Ten_Danh_Muc;
+                existingDanhMuc.Mo_Ta = danhMuc.Mo_Ta; // Cập nhật mô tả nếu cần
+                existingDanhMuc.Trang_Thai = danhMuc.Trang_Thai;  // Nếu bạn muốn cho phép cập nhật trạng thái từ đây, bỏ comment dòng này
+                // Giữ nguyên trạng thái
+
+                // Cập nhật danh mục
+                await _danhMucRepository.UpdateDanhMucAsync(existingDanhMuc);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Cập nhật danh mục thành công!",
+                    data = new
+                    {
+                        id = existingDanhMuc.Id,
+                        ten_Danh_Muc = existingDanhMuc.Ten_Danh_Muc,
+                        trang_Thai = existingDanhMuc.Trang_Thai,
+                        mo_ta = existingDanhMuc.Mo_Ta
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Lỗi khi cập nhật danh mục: " + ex.Message
+                });
+            }
+        }
         //GET: DanhMuc/Details/5
         // public async Task<ActionResult> Details(int id)
         // {
@@ -137,100 +235,9 @@ namespace ThuongMaiDienTu.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // Thêm phương thức CreateAjax
-        [HttpPost]
-        public async Task<IActionResult> CreateAjax([FromBody] DanhMuc danhMuc)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ", errors });
-            }
-
-            try
-            {
-                // Đặt trạng thái mặc định là true (hoạt động)
-                danhMuc.Trang_Thai = true;
-
-                // Thêm danh mục mới
-                await _danhMucRepository.AddDanhMucAsync(danhMuc);
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Thêm danh mục thành công!",
-                    data = new
-                    {
-                        id = danhMuc.Id,
-                        ten_Danh_Muc = danhMuc.Ten_Danh_Muc,
-                        trang_Thai = danhMuc.Trang_Thai
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Lỗi khi thêm danh mục: " + ex.Message
-                });
-            }
-        }
+        
         // Thêm các phương thức Ajax mới sau CreateAjax
 
-        [HttpPut]
-        public async Task<IActionResult> EditAjax([FromBody] DanhMuc danhMuc)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ", errors });
-            }
-
-            try
-            {
-                var existingDanhMuc = await _danhMucRepository.GetDanhMucByIdAsync(danhMuc.Id);
-                if (existingDanhMuc == null)
-                {
-                    return NotFound(new { success = false, message = "Không tìm thấy danh mục" });
-                }
-
-                // Cập nhật thông tin
-                existingDanhMuc.Ten_Danh_Muc = danhMuc.Ten_Danh_Muc;
-                // Giữ nguyên trạng thái
-
-                // Cập nhật danh mục
-                await _danhMucRepository.UpdateDanhMucAsync(existingDanhMuc);
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Cập nhật danh mục thành công!",
-                    data = new
-                    {
-                        id = existingDanhMuc.Id,
-                        ten_Danh_Muc = existingDanhMuc.Ten_Danh_Muc,
-                        trang_Thai = existingDanhMuc.Trang_Thai
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Lỗi khi cập nhật danh mục: " + ex.Message
-                });
-            }
-        }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAjax(int id)

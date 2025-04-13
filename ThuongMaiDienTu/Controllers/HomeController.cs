@@ -43,7 +43,7 @@ namespace ThuongMaiDienTu.Controllers
             page = Math.Max(1, Math.Min(page, totalPages));
             sanPhams = sanPhams.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-            List<DanhMuc> danhMucs = _danhMucRepository.GetAllDanhMucs();
+            List<DanhMuc> danhMucs = _danhMucRepository.GetAllDanhMucs().Where(dm => dm.Trang_Thai == true).ToList();
             List<Banner> banners = _bannerRepository.GetAllBanners();
 
             ViewBag.DanhMucs = danhMucs;
@@ -157,6 +157,10 @@ namespace ThuongMaiDienTu.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public IActionResult NotAllow()
+        {
+            return View();
         }
     }
 }

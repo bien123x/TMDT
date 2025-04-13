@@ -37,6 +37,7 @@
                             <th class="ps-4" scope="col">ID</th>
                             <th scope="col">Tên danh mục</th>
                             <th scope="col">Trạng thái</th>
+                            <th scope="col">Mô Tả</th>
                             <th class="text-end pe-4" scope="col">Thao tác</th>
                         </tr>
                     </thead>
@@ -64,6 +65,9 @@
                                         <i class="bi bi-x-circle me-1"></i>Đã khóa
                                     </span>
                                 }
+                            </td>
+                            <td class="category-description">
+                                @item.Mo_Ta 
                             </td>
                             <td class="text-end pe-4">
                                 <div class="btn-group">
@@ -127,6 +131,10 @@
                         <input class="form-check-input" type="checkbox" id="categoryStatus" name="Trang_Thai" checked>
                         <label class="form-check-label" for="categoryStatus">Hoạt động</label>
                     </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="categoryDescription" name="Mo_Ta" rows="3"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -156,6 +164,10 @@
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="editCategoryStatus" name="Trang_Thai">
                         <label class="form-check-label" for="editCategoryStatus">Hoạt động</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCategoryDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="editCategoryDescription" name="Mo_Ta" rows="3"></textarea>
                     </div>
                 </form>
             </div>
@@ -205,6 +217,7 @@
             document.getElementById('editCategoryId').value = id;
             document.getElementById('editCategoryName').value = name;
             document.getElementById('editCategoryStatus').checked = status;
+            document.getElementById('editCategoryDescription').value = document.querySelector(`#category-row-${id} .category-description`).textContent.trim();
 
             // Mở modal
             var editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
@@ -237,7 +250,8 @@
                     const categoryData = {
                         Id: parseInt(categoryId),
                         Ten_Danh_Muc: categoryName,
-                        Trang_Thai: document.getElementById('editCategoryStatus').checked
+                        Trang_Thai: document.getElementById('editCategoryStatus').checked,
+                        Mo_Ta: document.getElementById('editCategoryDescription').value
                     };
 
                     // Lấy token CSRF từ form
@@ -425,6 +439,13 @@
                     confirmToggleStatus(category.id, category.ten_Danh_Muc, category.trang_Thai);
                 };
             }
+            if (category.mo_ta) {
+                const descriptionCell = row.querySelector(`#category-row-${category.id} .category-description`);
+                if (descriptionCell) {
+                    descriptionCell.textContent = category.mo_ta;
+                }
+            }
+
         }
 
         // Hàm xóa dòng danh mục khỏi bảng
@@ -520,7 +541,8 @@
                 // Tạo đối tượng danh mục
                 const categoryData = {
                     Ten_Danh_Muc: categoryName,
-                    Trang_Thai: document.getElementById('categoryStatus').checked
+                    Trang_Thai: document.getElementById('categoryStatus').checked,
+                    Mo_Ta: document.getElementById('categoryDescription').value
                 };
 
                 // Lấy token CSRF từ form
@@ -596,9 +618,12 @@
                             <i class="bi bi-check-circle me-1"></i>Đang hoạt động
                         </span>
                     </td>
+                         <td class="category-description">
+                                         ${category.mo_ta}
+                                </td>
                     <td class="text-end pe-4">
                         <div class="btn-group">
-                            <a href="/DanhMuc/Edit/${category.id}" 
+                            <a href="" 
                                class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil-square me-1"></i>Sửa
                             </a>
@@ -646,4 +671,5 @@
             modal.show();
         }
     </script>
+    
 }

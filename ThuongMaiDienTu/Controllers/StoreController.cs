@@ -18,23 +18,41 @@ namespace ThuongMaiDienTu.Controllers
         }
         public IActionResult Index()
         {
+            var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+            if(isAdmin == null)
+            {
+                return RedirectToAction("NotAllow", "Home");
+            }
             var storeList = _repository.GetAll().ToList();
             return View(storeList);
         }
 
         public IActionResult Create()
         {
-            ViewBag.SellerId = HttpContext.Session.GetInt32("UserId");
+            // Thử lấy từ TempData trước
+            if (TempData["SellerId"] != null)
+            {
+                ViewBag.SellerId = TempData["SellerId"];
+                return View();
+            }
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["AccessMessage"] = "Bạn cần đăng nhập để tạo cửa hàng";
+                return RedirectToAction("NotAllow", "Home");
+            }
+            ViewBag.SellerId = userId;
             return View();
         }
 
         [HttpPost]
         public IActionResult Create(CuaHang cuaHang)
         {
+            
             if (ModelState.IsValid)
             {
                 _repository.Add(cuaHang);
-                var ch = _repository.GetAll().ToList().FirstOrDefault(ch=> ch.Id_Nguoi_Ban == cuaHang.Id_Nguoi_Ban);
+                var ch = _repository.GetAll().ToList().FirstOrDefault(ch => ch.Id_Nguoi_Ban == cuaHang.Id_Nguoi_Ban);
                 HttpContext.Session.SetInt32("StoreId", ch.Id);
                 return RedirectToAction("Index", "Home");
             }
@@ -47,6 +65,7 @@ namespace ThuongMaiDienTu.Controllers
             return View(_repository.GetById(storeId));
         }
 
+        //Sửa thông tin đơn hàng 
         [HttpPatch]
         [Route("Store/Edit/{id}")]
         public IActionResult Edit(int id, [FromBody] CuaHang cuaHangSua)
@@ -116,6 +135,28 @@ namespace ThuongMaiDienTu.Controllers
             if (store == null)
             {
                 return NotFound(); // Nếu không tìm thấy người dùng
+            }
+
+            var productCount = _context.SanPhams.Count(p => p.Id_Cua_Hang == store.Id);
+            ViewBag.ProductCount = productCount;
+
+            // Lấy đánh giá trung bình của cửa hàng (qua các sản phẩm)
+            var storeProducts = _context.SanPhams.Where(p => p.Id_Cua_Hang == store.Id).Select(p => p.Id).ToList();
+            if (storeProducts.Any())
+            {
+                var averageRating = _context.DanhGias
+                    .Where(r => storeProducts.Contains(r.Id_San_Pham))
+                    .Average(r => (double?)r.So_Sao) ?? 0;
+                ViewBag.AverageRating = Math.Round(averageRating, 1);
+
+                // Lấy tổng số đánh giá
+                var reviewCount = _context.DanhGias.Count(r => storeProducts.Contains(r.Id_San_Pham));
+                ViewBag.ReviewCount = reviewCount;
+            }
+            else
+            {
+                ViewBag.AverageRating = 0;
+                ViewBag.ReviewCount = 0;
             }
 
             return View(store);

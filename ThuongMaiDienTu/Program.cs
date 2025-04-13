@@ -17,7 +17,8 @@ builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
 builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 builder.Services.AddScoped<INguoiDungRepository, NguoiDungRepository>();
 builder.Services.AddScoped<IDonHangRepository, DonHangRepository>();
-
+builder.Services.AddScoped<IVanChuyenRepository, VanChuyenRepository>();
+builder.Services.AddScoped<IThanhToanRepository, ThanhToanRepository>();
 
 
 builder.Services.AddSession(options =>
@@ -47,10 +48,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthorization();
-
-app.UseMiddleware<BlockDirectAccessMiddleware>();
 
 
 app.MapControllerRoute(

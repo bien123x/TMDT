@@ -36,7 +36,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
     }
-
+   
    
 
     <!-- Main Table -->
@@ -118,15 +118,76 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white py-3">
-            <div class="row">
-                <div class="col-md-6">
-                    <span>Hiển thị <strong>@Model.Count()</strong> người dùng</span>
-                </div>
-            </div>
+       
+    </div>
+</div>
+<div class="card-footer bg-white py-3">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <span>Hiển thị <strong>@Model.Count()</strong> trong tổng số
+                <strong>@ViewBag.TotalItems</strong> người
+                dùng</span>
+        </div>
+        <div class="col-md-6">
+            <nav aria-label="Page navigation">
+                @if (ViewBag.TotalPages > 1)
+                {
+                    <ul class="pagination justify-content-end mb-0">
+                        <!-- First page -->
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="1"
+                                asp-route-searchTerm="@ViewBag.SearchTerm">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Previous page -->
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)"
+                                asp-route-searchTerm="@ViewBag.SearchTerm">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+
+                        @{
+                            int startPage = Math.Max(1, ViewBag.CurrentPage - 2);
+                            int endPage = Math.Min(ViewBag.TotalPages, startPage + 4);
+                            if (endPage - startPage < 4 && startPage > 1)
+                            {
+                                startPage = Math.Max(1, endPage - 4);
+                            }
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i"
+                                    asp-route-searchTerm="@ViewBag.SearchTerm">@i</a>
+                            </li>
+                        }
+
+                        <!-- Next page -->
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)"
+                                asp-route-searchTerm="@ViewBag.SearchTerm">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+
+                        <!-- Last page -->
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@ViewBag.TotalPages"
+                                asp-route-searchTerm="@ViewBag.SearchTerm">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                }
+            </nav>
         </div>
     </div>
 </div>
+
 
 <!-- Modal xác nhận -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">

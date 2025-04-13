@@ -1,0 +1,159 @@
+﻿@model List<ThuongMaiDienTu.Models.DonHang>
+@{
+    ViewData["Title"] = "Quản lý vận chuyển";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Đơn Hàng Cần Vận Chuyển</h2>
+    
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Danh Sách Đơn Hàng</h5>
+            
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Ngày tạo</th>
+                                <th>Người mua</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thanh toán</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var donHang in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="#" class="fw-bold text-decoration-none" 
+                                           >
+                                            #@donHang.Id
+                                        </a>
+                                    </td>
+                                    <td>@donHang.Ngay_Tao.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@donHang.NguoiDung?.Ho_Ten</td>
+                                    <td>@donHang.Tong_Tien.ToString("N0") đ</td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(donHang.Trang_Thai_Id)">
+                                            @donHang.TrangThaiDonHang?.Mo_Ta
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-@(donHang.ThanhToans?.OrderByDescending(t => t.Ngay_Tao).FirstOrDefault()?.TrangThaiThanhToan?.Mo_Ta == "Đã thanh toán" ? "success" : "warning")">
+                                            @(donHang.ThanhToans?.OrderByDescending(t =>
+                                                                                t.Ngay_Tao).FirstOrDefault()?.TrangThaiThanhToan?.Mo_Ta ?? "Chưa thanh toán")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                    data-bs-toggle="modal" data-bs-target="#modalUpdateStatus" 
+                                                    onclick="prepareUpdateStatus(@donHang.Id)">
+                                                <i class="fas fa-shipping-fast me-1"></i>Cập nhật
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle me-2"></i>Không có đơn hàng nào cần vận chuyển
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chi tiết đơn hàng -->
+<div class="modal fade" id="modalDetails" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi Tiết Đơn Hàng #<span id="orderIdDetail"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cập nhật trạng thái -->
+<div class="modal fade" id="modalUpdateStatus" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cập Nhật Trạng Thái Vận Chuyển</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="donHangId" name="donHangId" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Trạng thái vận chuyển</label>
+                        <select class="form-select" name="trangThaiVanChuyenId" required>
+                            <option value="">-- Chọn trạng thái --</option>
+                            @* @foreach (var trangThai in ViewBag.TrangThaiVanChuyens)
+                            {
+                                <option value="@trangThai.Id">@trangThai.Mo_Ta</option>
+                            } *@
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Trạng thái thanh toán</label>
+                        <select class="form-select" name="trangThaiThanhToanId">
+                        @* @foreach (var trangThai in ViewBag.TrangThaiThanhToans)
+                        {
+                            <option value="@trangThai.Id">@trangThai.Mo_Ta</option>
+                        } *@
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-control" name="ghiChu" rows="3" placeholder="Nhập ghi chú nếu có..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(int statusId)
+    {
+        return statusId switch
+        {
+            1 => "bg-secondary", // Mới tạo
+            2 => "bg-info",      // Chờ vận chuyển
+            3 => "bg-primary",   // Đang vận chuyển
+            4 => "bg-success",   // Đã giao hàng
+            5 => "bg-danger",    // Đã hủy
+            _ => "bg-secondary"
+        };
+    }
+}
+
+<script src="~/js/van-chuyen.js"></script>

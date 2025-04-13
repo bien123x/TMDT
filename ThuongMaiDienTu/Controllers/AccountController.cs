@@ -29,67 +29,113 @@ namespace ThuongMaiDienTu.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            var nguoiDung = _repository.GetAll().Where(nd => nd.So_Dien_Thoai == username || nd.Email == username);
+            // Kiểm tra username có tồn tại không
+            var userByCredential = _repository.GetAll().Where(nd =>
+                (nd.So_Dien_Thoai == username || nd.Email == username));
 
-            if (nguoiDung.Any(nd => nd.Mat_Khau == password))
+            if (!userByCredential.Any())
             {
-                var user = nguoiDung.First(nd => nd.Mat_Khau == password);
-                var userId = user.Id;
-                HttpContext.Session.SetInt32("UserId", userId);
-                HttpContext.Session.SetInt32("VaiTroId", user.Vai_Tro_Id); // Đảm bảo lưu VaiTroId
+                ViewBag.Error = "Tài khoản không tồn tại!";
+                return View();
+            }
 
-                var checkSeller = user.Vai_Tro_Id == 2;
-                var checkAdmin = user.Vai_Tro_Id == 3;
+            // Kiểm tra trạng thái tài khoản
+            var user = userByCredential.FirstOrDefault();
+            if (user.Trang_Thai != true)
+            {
+                ViewBag.Error = "Tài khoản đã bị khóa hoặc vô hiệu hóa!";
+                return View();
+            }
 
-                if (checkSeller)
+            // Kiểm tra mật khẩu
+            if (!BCrypt.Net.BCrypt.Verify(password, user.Mat_Khau))
+            {
+                ViewBag.Error = "Mật khẩu không chính xác!";
+                return View();
+            }
+
+            // Đăng nhập thành công - giữ nguyên logic hiện tại
+            var userId = user.Id;
+            HttpContext.Session.SetInt32("UserId", userId);
+            HttpContext.Session.SetInt32("VaiTroId", user.Vai_Tro_Id);
+
+            var checkSeller = user.Vai_Tro_Id == 2;
+            var checkAdmin = user.Vai_Tro_Id == 3;
+            var checkDVVC = user.Vai_Tro_Id == 4;
+
+            // Logic phân quyền người dùng
+            if (checkSeller)
+            {
+                HttpContext.Session.SetInt32("IsSeller", 1);
+                if (!_context.CuaHangs.Any(ch => ch.Id_Nguoi_Ban == userId))
                 {
-                    HttpContext.Session.SetInt32("IsSeller", 1);
-                    if (!_context.CuaHangs.Any(ch => ch.Id_Nguoi_Ban == userId))
-                    {
-                        return RedirectToAction("Create", "Store");
-                    }
-                    else
-                    {
-                        var cuaHang = _context.CuaHangs.FirstOrDefault(ch => ch.Id_Nguoi_Ban == userId);
-                        HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
-                    }
+                    return RedirectToAction("Create", "Store");
                 }
-
-                if (checkAdmin)
+                else
                 {
-                    HttpContext.Session.SetInt32("IsAdmin", 1); // Đảm bảo lưu IsAdmin
-                    return RedirectToAction("Index", "Home");
+                    var cuaHang = _context.CuaHangs.FirstOrDefault(ch => ch.Id_Nguoi_Ban == userId);
+                    HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
                 }
+            }
 
+            if (checkAdmin)
+            {
+                HttpContext.Session.SetInt32("IsAdmin", 1);
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.Error = "Tên đăng nhập hoặc mật khẩu sai!";
-            return View();
+            if (checkDVVC)
+            {
+                HttpContext.Session.SetInt32("IsDelivery", 4);
+                return RedirectToAction("Index", "Home");
+            }
+
+            return RedirectToAction("Index", "Home");
         }
         [HttpPost]
-        public IActionResult Register([FromBody]NguoiDung nguoiDung)
+        public IActionResult Register(NguoiDung nguoiDung)
         {
             if (!ModelState.IsValid)
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ" });
+                TempData["ErrorMessage"] = "Dữ liệu không hợp lệ";
+                return View(nguoiDung);
             }
 
             // Kiểm tra email đã tồn tại
             if (_context.NguoiDungs.Any(u => u.Email == nguoiDung.Email))
             {
-                return Json(new { success = false, message = "Email đã được sử dụng" });
+                TempData["ErrorMessage"] = "Email đã được sử dụng";
+                return View(nguoiDung);
             }
 
+            // Mã hóa mật khẩu
+            nguoiDung.Mat_Khau = BCrypt.Net.BCrypt.HashPassword(nguoiDung.Mat_Khau);
             nguoiDung.Ngay_Tao = DateTime.Now;
 
             _repository.Add(nguoiDung);
 
-            if (nguoiDung.Vai_Tro_Id == 2)
+            var newUser = _context.NguoiDungs
+            .Where(u => u.Email == nguoiDung.Email)
+            .OrderByDescending(u => u.Id)
+            .FirstOrDefault();
+
+            if (newUser != null)
             {
-                return Json(new { success = true, message = "Đăng ký thành công!", seller = true });
+                // Lưu ID vào session để sử dụng trong StoreController
+                HttpContext.Session.SetInt32("UserId", newUser.Id);
+                HttpContext.Session.SetInt32("VaiTroId", newUser.Vai_Tro_Id);
+
+                if (newUser.Vai_Tro_Id == 2)
+                {
+                    // Lưu thêm vào TempData để đảm bảo dữ liệu có sẵn sau khi chuyển hướng
+                    TempData["SellerId"] = newUser.Id;
+                    HttpContext.Session.SetInt32("IsSeller", 1);
+                    return RedirectToAction("Create", "Store");
+                }
             }
 
-            return Json(new { success = true, message = "Đăng ký thành công!", seller = false });
+
+            TempData["SuccessMessage"] = "Đăng ký thành công!";
+            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult Logout()
@@ -109,7 +155,7 @@ namespace ThuongMaiDienTu.Controllers
             {
                 return NotFound(); // Nếu không tìm thấy người dùng
             }
-            
+
             var checkStore = _context.CuaHangs.Count(u => u.Id_Nguoi_Ban == userId);
 
             if (user.Vai_Tro_Id == 2 && checkStore == 0)
@@ -148,5 +194,6 @@ namespace ThuongMaiDienTu.Controllers
             _repository.Update(user);
             return Json(new { success = true, message = "Sửa thông tin thành công!" });
         }
+        
     }
 }

@@ -4,6 +4,7 @@
     var user = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
     var isSeller = HttpContextAccessor.HttpContext.Session.GetInt32("IsSeller");
     var isAdmin = HttpContextAccessor.HttpContext.Session.GetInt32("IsAdmin");
+    var isDelivery = HttpContextAccessor.HttpContext.Session.GetInt32("IsDelivery");
     var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("cart_count");
 }
 <!DOCTYPE html>
@@ -58,7 +59,7 @@
                     {
                         <!-- Người dùng đã đăng nhập -->
 
-                        @if (isSeller == null && isAdmin == null)
+                        @if (isSeller == null && isAdmin == null && isDelivery == null)
                         { 
                             <!-- Block: Người dùng thường -->
                             <!-- Giỏ hàng -->
@@ -114,6 +115,21 @@
                                     </li>
                                     <li><a class="dropdown-item" href="@Url.Action("Index", "Store")">Quản Lý Cửa Hàng</a>
                                     </li>
+                                </ul>
+                            </div>
+                        }
+                        @if (isDelivery != null && isDelivery == 4)
+                        {
+                            <!-- Block: Đơn vị vận chuyển -->
+                            <div class="dropdown mx-2">
+                                <a class="nav-link dropdown-toggle" href="" id="dropdownDelivery" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-truck fs-5 me-1"></i> Vận Chuyển
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownDelivery">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "VanChuyen")">Đơn hàng vận
+                                            chuyển</a></li>
+                                   
                                 </ul>
                             </div>
                         }
@@ -222,6 +238,19 @@
                             </a>
                             <a class="nav-link ps-3 d-flex align-items-center" href="@Url.Action("Index", "SanPham")">
                                 <i class="fa-solid fa-cubes me-2"></i> Quản lý sản phẩm
+                            </a>
+                        </div>
+                    }
+                    @if (isDelivery != null && isDelivery == 4)
+                    {
+                        <!-- Menu cho đơn vị vận chuyển -->
+                        <div class="mb-3">
+                            <h6 class="dropdown-header">Quản lý vận chuyển</h6>
+                            <a class="nav-link ps-3 d-flex align-items-center" href="@Url.Action("Index", "VanChuyen")">
+                                <i class="fa-solid fa-truck me-2"></i> Đơn hàng vận chuyển
+                            </a>
+                            <a class="nav-link ps-3 d-flex align-items-center" href="@Url.Action("LichSu", "VanChuyen")">
+                                <i class="fa-solid fa-history me-2"></i> Lịch sử vận chuyển
                             </a>
                         </div>
                     }
