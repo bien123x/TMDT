@@ -16,6 +16,12 @@ namespace ThuongMaiDienTu.Controllers
         // GET: DanhMuc
         public ActionResult Index()
         {
+            // Kiểm tra người dùng đăng nhập có quyền admin
+            var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+            if (isAdmin != 1)
+            {
+                return RedirectToAction("NotAllow", "Home");
+            }
             var danhMucs = _danhMucRepository.GetAllDanhMucs();
             return View(danhMucs);
         }
@@ -24,6 +30,12 @@ namespace ThuongMaiDienTu.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAjax([FromBody] DanhMuc danhMuc)
         {
+            // Kiểm tra người dùng đăng nhập có quyền admin
+            var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+            if (isAdmin != 1)
+            {
+                return RedirectToAction("NotAllow", "Home");
+            }
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values
@@ -69,6 +81,12 @@ namespace ThuongMaiDienTu.Controllers
         [HttpPut]
         public async Task<IActionResult> EditAjax([FromBody] DanhMuc danhMuc)
         {
+            // Kiểm tra người dùng đăng nhập có quyền admin
+            var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+            if (isAdmin != 1)
+            {
+                return RedirectToAction("NotAllow", "Home");
+            }
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values
@@ -132,6 +150,12 @@ namespace ThuongMaiDienTu.Controllers
         // GET: DanhMuc/Create
         public ActionResult Create()
         {
+            // Kiểm tra người dùng đăng nhập có quyền admin
+            var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+            if (isAdmin != 1)
+            {
+                return RedirectToAction("NotAllow", "Home");
+            }
             return View();
         }
 
@@ -140,6 +164,12 @@ namespace ThuongMaiDienTu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Ten_Danh_Muc")] DanhMuc danhMuc)
         {
+            // Kiểm tra người dùng đăng nhập có quyền admin
+            var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+            if (isAdmin != 1)
+            {
+                return RedirectToAction("NotAllow", "Home");
+            }
             if (ModelState.IsValid)
             {
                 await _danhMucRepository.AddDanhMucAsync(danhMuc);

@@ -12,20 +12,20 @@ namespace ThuongMaiDienTu.Models
 
         [Required]
         [StringLength(255)]
-        public string Ho_Ten { get; set; }
+        public string? Ho_Ten { get; set; }
 
         [Required]
         [EmailAddress]
         [StringLength(255)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required]
         [StringLength(255)]
-        public string Mat_Khau { get; set; }
+        public string? Mat_Khau { get; set; }
 
         [StringLength(20)]
         [Phone]
-        public string So_Dien_Thoai { get; set; }
+        public string? So_Dien_Thoai { get; set; }
 
         public int Vai_Tro_Id { get; set; }
 
@@ -35,5 +35,7 @@ namespace ThuongMaiDienTu.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime Ngay_Tao { get; set; }
         public bool Trang_Thai { get; set; } = true;
+
+        public string? Mo_Ta { get; set; }
     }
 }

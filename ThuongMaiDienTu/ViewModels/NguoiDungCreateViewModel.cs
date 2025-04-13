@@ -33,4 +33,6 @@ public class NguoiDungCreateViewModel
     [ValidateNever] // thuộc tính này sẽ không được kiểm tra khi gửi dữ liệu từ form
     public IEnumerable<SelectListItem> VaiTroList { get; set; }
     // cung cấp dữ liệu cho dropdown list
+    [StringLength(500, ErrorMessage = "Mô tả không được quá 500 ký tự")]
+    public string? Mo_Ta { get; set; }
 }

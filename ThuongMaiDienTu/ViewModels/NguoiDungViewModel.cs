@@ -12,4 +12,6 @@ public class NguoiDungViewModel
     public bool Trang_Thai { get; set; }
     public bool HasStore { get; set; }
     public int? StoreId { get; set; }
+
+    public string? Mo_Ta { get; set; }
 }

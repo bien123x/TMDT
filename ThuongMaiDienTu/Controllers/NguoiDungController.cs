@@ -23,7 +23,7 @@ public class NguoiDungController : Controller
         _vaiTroRepository = vaiTroRepository;
         _context = context;
     }
-    
+
 
     // Hiển thị danh sách người dùng
     public IActionResult Index(int page = 1, int pageSize = 10)
@@ -36,7 +36,7 @@ public class NguoiDungController : Controller
         }
 
         var nguoiDungs = _nguoiDungRepository.GetAllWithDetails();
-        
+
 
         // Thông tin phân trang
         int totalItems = nguoiDungs.Count();
@@ -56,8 +56,39 @@ public class NguoiDungController : Controller
         ViewBag.TotalPages = totalPages;
         ViewBag.PageSize = pageSize;
         ViewBag.TotalItems = totalItems;
-      
+
         return View(pagedNguoiDungs);
+    }
+
+    public IActionResult DSNguoiDung(int page = 1, int pageSize = 10)
+    {
+        var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+        if (isAdmin == null)
+        {
+            return RedirectToAction("NotAllow", "Home");
+        }
+        var nguoiDungs = _nguoiDungRepository.GetAllWithDetails();
+        // Thông tin phân trang
+        int totalItems = nguoiDungs.Count();
+        int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+        // Đảm bảo page nằm trong khoảng hợp lệ
+        page = Math.Max(1, Math.Min(page, totalPages));
+
+        // Thực hiện phân trang
+        var pagedNguoiDungs = nguoiDungs
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        // Truyền thông tin phân trang cho view
+        ViewBag.CurrentPage = page;
+        ViewBag.TotalPages = totalPages;
+        ViewBag.PageSize = pageSize;
+        ViewBag.TotalItems = totalItems;
+
+        return View(pagedNguoiDungs);
+
     }
 
     // Xem chi tiết người dùng
@@ -66,7 +97,7 @@ public class NguoiDungController : Controller
         var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
         if (isAdmin == null)
         {
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("NotAllow", "Home");
         }
 
         var viewModel = _nguoiDungRepository.GetNguoiDungViewModelById(id);
@@ -86,6 +117,12 @@ public class NguoiDungController : Controller
         {
             return RedirectToAction("Login", "Account");
         }
+        ViewBag.VaiTros = _vaiTroRepository.GetAll()
+        .Select(vt => new SelectListItem
+        {
+            Value = vt.Id.ToString(),
+            Text = vt.Ten_vai_Tro
+        }).ToList();
 
         var viewModel = new NguoiDungCreateViewModel
         {
@@ -115,7 +152,7 @@ public class NguoiDungController : Controller
         viewModel.VaiTroList = LoadVaiTroList(viewModel.Vai_Tro_Id);
 
         // Kiểm tra tính hợp lệ của dữ liệu 
-        ValidationNguoiDungCreate(viewModel); 
+        ValidationNguoiDungCreate(viewModel);
 
         if (!ModelState.IsValid)
         {
@@ -126,7 +163,7 @@ public class NguoiDungController : Controller
 
             // Thêm thông báo tổng quát
             TempData["ErrorMessage"] = $"Vui lòng kiểm tra lại thông tin đã nhập: {string.Join(", ", errorMessages)}";
-            
+
             return View(viewModel);
         }
 
@@ -142,20 +179,28 @@ public class NguoiDungController : Controller
                 So_Dien_Thoai = viewModel.So_Dien_Thoai?.Trim(),
                 Vai_Tro_Id = viewModel.Vai_Tro_Id,
                 Ngay_Tao = DateTime.Now,
+                Mo_Ta =  viewModel.Mo_Ta,
                 Trang_Thai = viewModel.Trang_Thai
             };
 
             // Lưu vào cơ sở dữ liệu
             _nguoiDungRepository.Add(nguoiDung);
-
+            TempData["StatusMessage"] = "Thêm người dùng thành công!";
+            return RedirectToAction("DSNguoiDung");
             // Thông báo thành công
-            TempData["StatusMessage"] = "Tạo tài khoản người dùng thành công!";
-            return RedirectToAction(nameof(Index));
+            // TempData["StatusMessage"] = "Tạo tài khoản người dùng thành công!";
+            // return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
+            ViewBag.VaiTros = _vaiTroRepository.GetAll()
+            .Select(vt => new SelectListItem
+            {
+                Value = vt.Id.ToString(),
+                Text = vt.Ten_vai_Tro
+            }).ToList();
             // Xử lý ngoại lệ và ghi log
-            ModelState.AddModelError("", $"Có lỗi xảy ra: {ex.Message}");    
+            ModelState.AddModelError("", $"Có lỗi xảy ra: {ex.Message}");
             return View(viewModel);
         }
     }
@@ -326,12 +371,12 @@ public class NguoiDungController : Controller
         {
             return NotFound();
         }
-        
+
         // Luôn khởi tạo danh sách vai trò
         viewModel.VaiTroList = LoadVaiTroList(viewModel.Vai_Tro_Id);
         // Áp dụng xác thực
         ValidateNguoiDungEdit(viewModel, id);
-        
+
         if (ModelState.IsValid)
         {
             try
@@ -341,7 +386,7 @@ public class NguoiDungController : Controller
                 {
                     return NotFound();
                 }
-                
+
                 nguoiDung.Ho_Ten = viewModel.Ho_Ten;
                 nguoiDung.Email = viewModel.Email;
                 nguoiDung.So_Dien_Thoai = viewModel.So_Dien_Thoai;
@@ -370,7 +415,7 @@ public class NguoiDungController : Controller
                     throw;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Có lỗi xảy ra: {ex.Message}");
             }
@@ -433,5 +478,105 @@ public class NguoiDungController : Controller
         {
             return Json(new { success = false, message = "Không thể thay đổi vai trò người dùng." });
         }
+
+    }
+    [HttpGet("NguoiDung/GetUserData/{id}")]
+    public IActionResult GetUserData(int id)
+    {
+        var user = _nguoiDungRepository.GetById(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return Json(new
+        {
+            id = user.Id,
+            ho_Ten = user.Ho_Ten,
+            email = user.Email,
+            so_Dien_Thoai = user.So_Dien_Thoai,
+            Ngay_Tao = user.Ngay_Tao.ToString("dd/MM/yyyy"),
+            Vai_Tro = _vaiTroRepository.GetById(user.Vai_Tro_Id)?.Ten_vai_Tro,
+            mo_Ta = user.Mo_Ta,
+            trang_Thai = user.Trang_Thai
+        });
+    }
+    [HttpPatch]
+    [Route("NguoiDung/EditND/{id}")]
+    public IActionResult EditND(int id, [FromBody] NguoiDungEditViewModel nguoiDungSua)
+    {
+        var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+        if (isAdmin == null)
+        {
+            return Json(new { success = false, message = "Không có quyền thực hiện" });
+        }
+        ModelState.Clear();
+        TryValidateModel(nguoiDungSua, nameof(nguoiDungSua.Ho_Ten));
+        TryValidateModel(nguoiDungSua, nameof(nguoiDungSua.Email));
+        TryValidateModel(nguoiDungSua, nameof(nguoiDungSua.So_Dien_Thoai));
+        // Kiểm tra email và số điện thoại trùng lặp (trừ người dùng hiện tại)
+        if (!string.IsNullOrEmpty(nguoiDungSua.Email) && _context.NguoiDungs.Any(n => n.Email == nguoiDungSua.Email && n.Id != id))
+        {
+            ModelState.AddModelError("Email", "Email đã được sử dụng, vui lòng chọn email khác");
+        }
+
+        if (!string.IsNullOrEmpty(nguoiDungSua.So_Dien_Thoai) && _context.NguoiDungs.Any(n => n.So_Dien_Thoai == nguoiDungSua.So_Dien_Thoai && n.Id != id))
+        {
+            ModelState.AddModelError("So_Dien_Thoai", "Số điện thoại đã được sử dụng, vui lòng nhập số khác");
+        }
+        if (ModelState.IsValid)
+        {
+            var nguoiDung = _nguoiDungRepository.GetById(id);
+            if (nguoiDung == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy người dùng" });
+            }
+
+            // Cập nhật thông tin người dùng
+            nguoiDung.Ho_Ten = nguoiDungSua.Ho_Ten;
+            nguoiDung.Email = nguoiDungSua.Email;
+            nguoiDung.So_Dien_Thoai = nguoiDungSua.So_Dien_Thoai;
+            nguoiDung.Mo_Ta = nguoiDungSua.Mo_Ta;
+            if (!string.IsNullOrEmpty(nguoiDungSua.Mat_Khau))
+            {
+                nguoiDung.Mat_Khau = BCrypt.Net.BCrypt.HashPassword(nguoiDungSua.Mat_Khau);
+            }
+
+            _nguoiDungRepository.Update(nguoiDung);
+            return Json(new { success = true, message = "Cập nhật thông tin người dùng thành công!" });
+        }
+
+        return Json(new { success = false, message = "Cập nhật thất bại", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+    }
+    [HttpPost]
+    [Route("NguoiDung/ToggleUserStatus/{id}")]
+    public IActionResult ToggleUserStatus(int id)
+    {
+        var isAdmin = HttpContext.Session.GetInt32("IsAdmin");
+        if (isAdmin != 1)
+        {
+            return Json(new { success = false, message = "Không có quyền thực hiện" });
+        }
+
+        var nguoiDung = _nguoiDungRepository.GetById(id);
+        if (nguoiDung == null)
+        {
+            return Json(new { success = false, message = "Không tìm thấy người dùng" });
+        }
+
+        // Đảo ngược trạng thái
+        nguoiDung.Trang_Thai = !nguoiDung.Trang_Thai;
+        _nguoiDungRepository.Update(nguoiDung);
+
+        string message = nguoiDung.Trang_Thai
+            ? "Đã mở khóa người dùng thành công"
+            : "Đã khóa người dùng thành công";
+
+        return Json(new
+        {
+            success = true,
+            message = message,
+            newStatus = nguoiDung.Trang_Thai
+        });
     }
 }

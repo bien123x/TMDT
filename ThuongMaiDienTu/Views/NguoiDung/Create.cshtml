@@ -88,6 +88,15 @@
                                 <span asp-validation-for="Trang_Thai" class="text-danger"></span>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label asp-for="Mo_Ta" class="col-md-3 col-form-label">Mô tả</label>
+                            <div class="col-md-9">
+                                <textarea asp-for="Mo_Ta" class="form-control" rows="4" 
+                                        placeholder="Nhập thông tin mô tả về người dùng này"></textarea>
+                                <span asp-validation-for="Mo_Ta" class="text-danger"></span>
+                                <div class="form-text">Thông tin thêm về người dùng (tối đa 500 ký tự)</div>
+                            </div>
+                        </div>
                         
                         <div class="row">
                             <div class="col-md-9 offset-md-3">

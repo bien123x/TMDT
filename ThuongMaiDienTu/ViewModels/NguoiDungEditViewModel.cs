@@ -33,4 +33,5 @@ public class NguoiDungEditViewModel
     [BindNever]
     [ValidateNever]
     public IEnumerable<SelectListItem> VaiTroList { get; set; }
+    public string? Mo_Ta { get; set; }
 }

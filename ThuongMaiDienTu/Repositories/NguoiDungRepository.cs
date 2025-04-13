@@ -37,7 +37,8 @@ public class NguoiDungRepository : Repository<NguoiDung>, INguoiDungRepository
                     Ngay_Tao = nguoiDungGroup.NguoiDung.Ngay_Tao,
                     Trang_Thai = nguoiDungGroup.NguoiDung.Trang_Thai,
                     HasStore = cuaHang != null,
-                    StoreId = cuaHang != null ? cuaHang.Id : 0
+                    StoreId = cuaHang != null ? cuaHang.Id : 0,
+                    Mo_Ta = nguoiDungGroup.NguoiDung.Mo_Ta
                 }
             )
             .ToList();
