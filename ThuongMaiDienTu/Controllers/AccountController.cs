@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ThuongMaiDienTu.Data;
@@ -27,8 +30,13 @@ namespace ThuongMaiDienTu.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login(string username, string password, bool rememberMe = false)
         {
+            Console.WriteLine(rememberMe);
+            if (HttpContext.Session.GetInt32("UserId") != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             // Kiểm tra username có tồn tại không
             var userByCredential = _repository.GetAll().Where(nd =>
                 (nd.So_Dien_Thoai == username || nd.Email == username));
@@ -58,6 +66,34 @@ namespace ThuongMaiDienTu.Controllers
             var userId = user.Id;
             HttpContext.Session.SetInt32("UserId", userId);
             HttpContext.Session.SetInt32("VaiTroId", user.Vai_Tro_Id);
+
+            // Lưu cookie nếu chọn "Ghi nhớ đăng nhập"
+            if (rememberMe)
+            {
+                // Tạo claims cho identity
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                    new Claim(ClaimTypes.Role, user.Vai_Tro_Id.ToString())
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // Cấu hình cookie options với thời gian dài hơn
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30)  // Cookie tồn tại 30 ngày
+                };
+
+                // Đăng nhập với cookie
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal,
+                    authProperties
+                );
+            }
 
             var checkSeller = user.Vai_Tro_Id == 2;
             var checkAdmin = user.Vai_Tro_Id == 3;
@@ -138,9 +174,10 @@ namespace ThuongMaiDienTu.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
 

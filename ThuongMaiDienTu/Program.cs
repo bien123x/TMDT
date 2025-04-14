@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using ThuongMaiDienTu.Data;
 using ThuongMaiDienTu.Middleware;
 using ThuongMaiDienTu.Repositories;
@@ -28,6 +29,17 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // Cookie cần thiết để Session hoạt động
 });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "ThuongMaiDienTu.Auth";
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.SlidingExpiration = true;
+    });
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 
@@ -42,7 +54,10 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseSession();
 
-
+app.UseAuthentication();
+app.UseAuthorization();
+// Thêm sau các middleware khác và trước app.MapControllerRoute
+app.UseCookieAuthentication();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
