@@ -2,7 +2,6 @@
 bin/
 obj/
 .vs/
-**/appsettings*.json
 **/secrets.json
 .env
 
